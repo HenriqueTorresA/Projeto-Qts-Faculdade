@@ -1,0 +1,26 @@
+{% extends 'qts/base.html' %}
+{% block conteudo %}
+<form action="{% url 'cadastrar_alunos' %}" method="post">
+    {% csrf_token %}
+    <div style="text-align: center" class="container">
+        <h1>Cadastro de alunos</h1>
+        
+        <div class="position-relative my-5 row">
+            <div class="input-group mb-3 w-50 p-3 position-absolute start-50 translate-middle align-bottom">
+                <input name="nome" type="text" class="form-control" placeholder="Nome do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+            </div>
+        </div> 
+        <div class="position-relative my-5 row">
+            <div class="input-group mb-3 w-50 p-3 position-absolute start-50 translate-middle align-bottom">
+                <input name="login" type="text" class="form-control" placeholder="Login do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+            </div>
+        </div> 
+        <div class="position-relative my-5 row">
+            <div class="input-group mb-3 w-50 p-3 position-absolute start-50 translate-middle align-bottom">
+                <input name="senha" type="text" class="form-control" placeholder="Senha do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+            </div>
+        </div>        
+        <button class="btn btn-outline-success form-control-sm" type="submit" id="button-addon2">Cadastrar</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'qts/base.html' %}
+{% block conteudo %}
+<div class="row text-center">
+    <h1>Lista de matérias</h1>
+</div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col-8 justify-content-center">
+
+        <table class="table table-bordered table-striped">
+            
+            <tr>
+                <th class="col-1">id</th>
+                <th class="col-9">nome</th>
+            </tr>
+            <!-- Sintaxe específica do Django para laço de repetição:-->
+            {% for materia in materia %}
+            <tr>
+                <td>{{materia.id_materia}}</td>
+                <td>{{materia.nome}}</td>
+                <td>
+                    {% if materia.id_materia %}
+                    <a href=" {% url 'deletar_materia' materia.id_materia %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+    </div>
+    <div class="col"></div>
+</div>
+{% endblock %}
