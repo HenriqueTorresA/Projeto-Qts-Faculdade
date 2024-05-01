@@ -22,7 +22,7 @@ def listar_alunos(request):
         'alunos': Aluno.objects.all() # pega todos os objetos da classe Aluno
     }
     return render(request,'qts/alunos.html/',alunos) 
-
+   
 def deletar_alunos(request, id_aluno):
     aluno = get_object_or_404(Aluno, id_aluno=id_aluno)
     aluno.delete()
