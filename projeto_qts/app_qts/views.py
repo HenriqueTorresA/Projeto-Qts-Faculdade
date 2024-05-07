@@ -14,7 +14,7 @@ def home(request): #nome que foi especificado no arquivos urls.py
 
 #abrir a tela de cadastro de alunos
 def tela_cadastrar_alunos(request):
-    return render(request, 'qts/alunos_cadastro.html')
+    return render(request, 'qts/cadastro/alunos_cadastro.html')
     
 # View responsável por salvar o cadastro do novo aluno no model Aluno()
 def cadastrar_alunos(request):
@@ -23,7 +23,7 @@ def cadastrar_alunos(request):
     novo_aluno.login = request.POST.get('login').strip()
     novo_aluno.senha = request.POST.get('senha').strip()
     novo_aluno.save()
-    return render(request,'qts/alunos_cadastro.html') 
+    return render(request,'qts/cadastro/alunos_cadastro.html') 
     
 # Exibir todos os alunos já cadastrados no SQLite em uma nova página
 def listar_alunos(request):
@@ -32,7 +32,7 @@ def listar_alunos(request):
     }
     # inicia a página de listagem de alunos passando o dicionário como parâmetro
     # com isso o HTML poderá utilizar estes dados do dicionário para mostrá-lo na tela
-    return render(request,'qts/alunos.html/',alunos) 
+    return render(request,'qts/listagem/alunos.html/',alunos) 
    
 def deletar_alunos(request, id_aluno):
     aluno = get_object_or_404(Aluno, id_aluno=id_aluno)
@@ -41,7 +41,7 @@ def deletar_alunos(request, id_aluno):
 
 #abrir a tela de cadastro de alunos
 def tela_cadastrar_professores(request):
-    return render(request, 'qts/professores_cadastro.html')
+    return render(request, 'qts/cadastro/professores_cadastro.html')
 
 # View responsável por salvar o cadastro do novo professor no model Professor() e vincular com os dias
 # no model Disponibilidade_Dia(), criando a disponibilidade dele
@@ -58,7 +58,7 @@ def cadastrar_professores(request):
         dia = Dia.objects.get(id_dia=int(dia_marcado))
         disponibilidade.id_dia = dia
         disponibilidade.save()
-    return render(request,'qts/professores_cadastro.html')
+    return render(request,'qts/cadastro/professores_cadastro.html')
 
 #def cadastrar_disponibilidade_dia_professor(request, id_professor, id_dia):
 #    nova_materia_professor = Disponibilidade_Dia()
@@ -71,7 +71,7 @@ def listar_professores(request):
     professores = {
         'professores': Professor.objects.all()
     }
-    return render(request,'qts/professores.html',professores)
+    return render(request,'qts/listagem/professores.html',professores)
 
 def deletar_professores(request, id_professor):
     professor = get_object_or_404(Professor, id_professor=id_professor)
@@ -79,22 +79,29 @@ def deletar_professores(request, id_professor):
     return redirect(listar_professores)
 
 def tela_cadastrar_materia(request):
-    return render(request, 'qts/materias_cadastro.html')
+    return render(request, 'qts/cadastro/materias_cadastro.html')
 
 def cadastrar_materia(request):
     nova_materia = Materia()
     nova_materia.nome = request.POST.get('nome').strip()
     nova_materia.save()
-    return render(request,'qts/materias_cadastro.html')
+    return render(request,'qts/cadastro/materias_cadastro.html')
 
 def listar_materia(request):
     materia = {
         'materia': Materia.objects.all()
     }
-    return render(request,'qts/materias.html',materia)
+    return render(request,'qts/listagem/materias.html',materia)
 
 def deletar_materia(request, id_materia):
     materia = get_object_or_404(Materia, id_materia=id_materia)
     materia.delete()
     return redirect(listar_materia)
 
+def tela_materia_professor(request):
+    context = {
+        'professor': Professor.objects.all(),
+        'materia': Materia.objects.all(),
+        'materia_professor': Materia_Professor.objects.all()
+    }
+    return render(request, 'qts/vincular/materia_professor.html', context)
