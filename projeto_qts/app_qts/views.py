@@ -99,9 +99,29 @@ def deletar_materia(request, id_materia):
     return redirect(listar_materia)
 
 def tela_materia_professor(request):
+    professores = Professor.objects.all()
     context = {
         'professor': Professor.objects.all(),
+        'professores_ids':[str(professor.id_professor) for professor in professores],
         'materia': Materia.objects.all(),
         'materia_professor': Materia_Professor.objects.all()
     }
     return render(request, 'qts/vincular/materia_professor.html', context)
+
+def cadastrar_materia_professor(request):
+    novo_mateira_professor = Materia_Professor()
+    materiaId = request.POST.get('materia_id')
+    professorId = request.POST.get('professor_id')
+
+    try:
+        materiaSelecionada = Materia.objects.get(pk=materiaId)
+        professorSelecionado = Professor.objects.get(pk=professorId)
+    except (Materia.DoesNotExist, Professor.DoesNotExist):
+            # Lide com o caso em que a matéria não existe
+            # Por exemplo, retorne uma resposta de erro ou renderize um template de erro
+        return render(request, 'erro.html', {'mensagem': 'Matéria não encontrada'})
+
+    novo_mateira_professor = Materia_Professor(materia=materiaSelecionada, professor=professorSelecionado) ## provavelmente o erro está sendo aqui
+    novo_mateira_professor.save()
+
+    return render(request,'qts/vincular/materia_professor.html')

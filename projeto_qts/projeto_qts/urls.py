@@ -38,5 +38,6 @@ urlpatterns = [
     path('cadastrar_materia/',views.cadastrar_materia,name="cadastrar_materia"),
     path('listar_materia/',views.listar_materia,name="listar_materia"),
     path('deletar_materia/<int:id_materia>',views.deletar_materia,name='deletar_materia'),
-    path('tela_materia_professor',views.tela_materia_professor, name='tela_materia_professor')
+    path('tela_materia_professor',views.tela_materia_professor, name='tela_materia_professor'),
+    path('cadastrar_materia_professor', views.cadastrar_materia_professor, name='cadastrar_materia_professor')
 ]
