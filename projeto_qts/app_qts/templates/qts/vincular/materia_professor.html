@@ -31,8 +31,9 @@
     <div class="col-3" style="background-color: rgb(113, 43, 43) !important"></div>
 </div>
 
-<input type="hidden" name="materia_id" id="materia-id" value="{{ materiaId }}">
-<input type="hidden" name="professor_id" id="professor-id" value="{{ professorId }}">
+<!-- Input oculto que preenche o formulário-->
+<input type="hidden" name="materia_id" id="materia-id" value="{{ materiaId }}" required>
+<input type="hidden" name="professor_id" id="professor-id" value="{{ professorId }}" required>
 <!-- botão que finaliza o formulário -->
 <div class="d-grid gap-2 pt-5 mx-auto" style="width: 70%;">
     <button class="btn btn-outline-success" type="submit" id="button-addon2">Cadastrar</button>
@@ -48,7 +49,7 @@
                 </tr>
             </thead>
             <!-- Sintaxe específica do Django para laço de repetição:-->
-            {% for materia in materia %}
+            {% for materia in materia_sem_vinculo %}
             <tr>
                 <td>
                     <div class="form-check ps-5">

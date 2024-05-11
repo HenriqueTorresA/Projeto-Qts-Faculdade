@@ -1,0 +1,86 @@
+{% extends 'qts/base.html' %}
+{% block conteudo %}
+<div class="row text-center p-5">
+    <h1>Lista de vínculo de Professores com Matérias</h1>
+</div>
+<div class="row text-center pt-5 pb-5">
+    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
+    <div class="col">
+        <h3>Registros com vínculo</h3>
+    </div>
+    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
+</div>
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col-8 justify-content-center">
+
+        <table class="table table-bordered table-striped table-hover professor-column">
+            <thead class="table-dark">
+                <tr>
+                    <th class="col-5">Materia</th>
+                    <th class="col-6">Professor</th>
+                </tr>
+            </thead>
+                <!-- Sintaxe específica do Django para laço de repetição:-->
+            {% for materia_professor in materia_professor %}
+                <tr>
+                    <td>{{materia_professor.id_materia.nome}}</td>
+                    <td>{{materia_professor.id_professor.nome}}</td>
+                    <td>
+                        {% if materia_professor.id_materia and materia_professor.id_professor %}
+                            <a href=" {% url 'deletar_materia_professor' materia_professor.id_materia.id_materia %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            
+        </table>
+    </div>
+    <div class="col"></div>
+</div>
+<br><br><br><br><br><br>
+<div class="row text-center pt-5">
+    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
+    <div class="col">
+        <h3>Registros sem vínculo</h3>
+    </div>
+    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
+</div>
+<div class="row px-5">
+    <div class="col p-5">
+        <table class="table table-bordered table-striped table-hover professor-column">
+            <thead class="table-dark">
+                <tr>
+                    <th class="col-5">Professores sem vínculo</th>
+                </tr>
+            </thead>
+            <!-- Sintaxe específica do Django para laço de repetição:-->
+            {% for profsvinc in professor_sem_vinculo %}
+                    <tr>
+                        <td>{{profsvinc.nome}}</td>
+                    </tr>
+                    
+            {% endfor %}
+            
+        </table>
+    </div>
+    <div class="col p-5">
+        <table class="table table-bordered table-striped table-hover professor-column">
+            <thead class="table-dark">
+                <tr>
+                    <th class="col-5">Matérias sem vínculo</th>
+                </tr>
+            </thead>
+            <!-- Sintaxe específica do Django para laço de repetição:-->
+            {% for matsvinc in materia_sem_vinculo %}
+                <tr>
+                    <td>{{ matsvinc.nome }}</td>
+                </tr>
+                
+            {% endfor %}
+            
+        </table>
+    </div>
+</div>
+{% endblock %}

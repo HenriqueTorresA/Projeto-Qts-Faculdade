@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Aluno, Professor, Materia, Dia, Materia_Professor, Disponibilidade_Dia
 # Create your views here.
 
@@ -88,10 +89,11 @@ def cadastrar_materia(request):
     return render(request,'qts/cadastro/materias_cadastro.html')
 
 def listar_materia(request):
-    materia = {
-        'materia': Materia.objects.all()
+    context = {
+        'materia': Materia.objects.all(),
+        'materia_professor': Materia_Professor.objects.all()
     }
-    return render(request,'qts/listagem/materias.html',materia)
+    return render(request,'qts/listagem/materias.html',context)
 
 def deletar_materia(request, id_materia):
     materia = get_object_or_404(Materia, id_materia=id_materia)
@@ -100,11 +102,13 @@ def deletar_materia(request, id_materia):
 
 def tela_materia_professor(request):
     professores = Professor.objects.all()
+    professor_sem_vinculo, materia_sem_vinculo = filtrar_prof_mat_sem_vinculo()
     context = {
         'professor': Professor.objects.all(),
         'professores_ids':[str(professor.id_professor) for professor in professores],
         'materia': Materia.objects.all(),
-        'materia_professor': Materia_Professor.objects.all()
+        'materia_professor': Materia_Professor.objects.all(),
+        'materia_sem_vinculo': materia_sem_vinculo
     }
     return render(request, 'qts/vincular/materia_professor.html', context)
 
@@ -112,16 +116,60 @@ def cadastrar_materia_professor(request):
     novo_mateira_professor = Materia_Professor()
     materiaId = request.POST.get('materia_id')
     professorId = request.POST.get('professor_id')
+    materiaProfessor = Materia_Professor.objects.all()
+    # Não permitir que seja cadastrado um novo relacionamento de uma matéria que já tenha professor
+    id_materia_lista = []
+    for matprof in materiaProfessor:
+        id_materia_lista.append(matprof.id_materia.id_materia)
+    if int(materiaId) in id_materia_lista:
+        return redirect(tela_materia_professor)
 
+    # Lidar com o caso em que a matéria não existe
     try:
         materiaSelecionada = Materia.objects.get(pk=materiaId)
         professorSelecionado = Professor.objects.get(pk=professorId)
     except (Materia.DoesNotExist, Professor.DoesNotExist):
-            # Lide com o caso em que a matéria não existe
-            # Por exemplo, retorne uma resposta de erro ou renderize um template de erro
-        return render(request, 'erro.html', {'mensagem': 'Matéria não encontrada'})
-
-    novo_mateira_professor = Materia_Professor(materia=materiaSelecionada, professor=professorSelecionado) ## provavelmente o erro está sendo aqui
+        return render(request, 'qts/vincular/materia_professor.html', {'mensagem': 'Matéria ou Professor não encontrada'})
+  
+    novo_mateira_professor.id_materia = materiaSelecionada
+    novo_mateira_professor.id_professor = professorSelecionado
     novo_mateira_professor.save()
 
-    return render(request,'qts/vincular/materia_professor.html')
+    return redirect(tela_materia_professor)
+
+def listar_materia_professor(request):
+    professor_sem_vinculo, materia_sem_vinculo = filtrar_prof_mat_sem_vinculo()
+
+    context = {
+        'professor': Professor.objects.all(),
+        'materia': Materia.objects.all(),
+        'materia_professor': Materia_Professor.objects.all(),
+        'professor_sem_vinculo': professor_sem_vinculo,
+        'materia_sem_vinculo': materia_sem_vinculo
+    }
+    return render(request, 'qts/listagem/materia_professor.html',context)
+
+def deletar_materia_professor(request, id_materia):
+    materia_professor = get_object_or_404(Materia_Professor, id_materia=id_materia)
+    materia_professor.delete()
+    return redirect(listar_materia_professor)
+
+
+
+
+
+## ============================================================================================================
+# FUNÇÕES QUE NÃO SÃO VIEWS
+def filtrar_prof_mat_sem_vinculo():
+    professor = Professor.objects.all()
+    materia = Materia.objects.all()
+    materia_professor = Materia_Professor.objects.all()
+
+    # Extrai os IDs dos professores e materias vinculados
+    professores_vinculados_ids = set([mp.id_professor.id_professor for mp in materia_professor])
+    materias_vinculadas_ids = set([mp.id_materia.id_materia for mp in materia_professor])
+    # Filtra os professores e materias que não estão vinculados
+    professor_sem_vinculo = [prof for prof in professor if prof.id_professor not in professores_vinculados_ids]
+    materia_sem_vinculo = [mat for mat in materia if mat.id_materia not in materias_vinculadas_ids]
+
+    return professor_sem_vinculo, materia_sem_vinculo
