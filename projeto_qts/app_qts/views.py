@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Aluno, Professor, Materia, Dia, Materia_Professor, Disponibilidade_Dia
+from .models import Aluno, Professor, Materia, Dia, Materia_Professor, Disponibilidade_Dia, Disponibilidade_Dia_Materia
 # Create your views here.
 
 def home(request): #nome que foi especificado no arquivos urls.py
@@ -112,31 +112,62 @@ def tela_materia_professor(request):
     }
     return render(request, 'qts/vincular/materia_professor.html', context)
 
+# View responável por vincular matéria com professor e também realiza vinculo da matéria com o 
+# dia da semana que o professor tem disponível 
 def cadastrar_materia_professor(request):
     novo_mateira_professor = Materia_Professor()
-    materiaId = request.POST.get('materia_id')
-    professorId = request.POST.get('professor_id')
+    materiaId = request.POST.get('materia_id') # pega do HTML o elemento do nome materia_id
+    professorId = request.POST.get('professor_id') # pega do HTML o elemento do nome professor_id
+    # Obtém todos os vínculos de matéria com professor que já existem
     materiaProfessor = Materia_Professor.objects.all()
+    
     # Não permitir que seja cadastrado um novo relacionamento de uma matéria que já tenha professor
     id_materia_lista = []
-    for matprof in materiaProfessor:
-        id_materia_lista.append(matprof.id_materia.id_materia)
-    if int(materiaId) in id_materia_lista:
-        return redirect(tela_materia_professor)
+    for matprof in materiaProfessor: #Objeto que lista os vínculos existentes
+        id_materia_lista.append(matprof.id_materia.id_materia) #Adiciona o id_materia na lista
+    if int(materiaId) in id_materia_lista: #Se a matéria já existir nessa lista das matérias que já temos
+        return redirect(tela_materia_professor) #Então voltar à tela de cadastro sem salvar nada
 
-    # Lidar com o caso em que a matéria não existe
+    # Lidar com o caso em que a matéria ou o professor não existe
     try:
-        materiaSelecionada = Materia.objects.get(pk=materiaId)
+        # Pegar a matéria que foi selecionada na tela
+        materiaSelecionada = Materia.objects.get(pk=materiaId) 
+        # Pegar o professor que foi selecionado na tela
         professorSelecionado = Professor.objects.get(pk=professorId)
+    #Capturar a exceção que acusa que não existe valores em materia ou professor
     except (Materia.DoesNotExist, Professor.DoesNotExist):
-        return render(request, 'qts/vincular/materia_professor.html', {'mensagem': 'Matéria ou Professor não encontrada'})
-  
+        return render(request, 'qts/erros/erro_semProf_semId.html') # Retornar tela de erro
+    # Se chegar até aqui, então salvar o novo registro de vínculo de matéria com professor
     novo_mateira_professor.id_materia = materiaSelecionada
     novo_mateira_professor.id_professor = professorSelecionado
     novo_mateira_professor.save()
 
+    ##### Pegar o professor que foi vinculado com a matéria e vincular 
+    ##### com os dias em que ele tem tem disponível
+    disp_dia_prof = Disponibilidade_Dia.objects.all() #Obter os dias dos professores
+    dias_completos = [c for c in disp_dia_prof] # Pegar todos os dias de todos os professores
+    dias_prof = [] # Lista que armazenará somente os dias do professor que foi informado
+    # Pegar a lista dos dias em que este professor tem disponibilidade
+    for d in dias_completos: # Navegar pelos dias de todos os professores
+        #Se chegar nos dias do professor que foi informado na tela, adicionar na lista dias_prof
+        if str(d.id_professor.id_professor) == str(professorSelecionado.id_professor):
+            dias_prof.append(d.id_dia)
+    ### Vincular os dias do professor com o professor e a matéria selecionados
+    cont = 0 # Contador que adicionará no for o id da disp. dia
+    for d in dias_prof: # Percorrer a lista de dias do professor selecionado
+        novo_disp_dia_prof_mat = Disponibilidade_Dia_Materia()
+        novo_disp_dia_prof_mat.id_dia = d
+        novo_disp_dia_prof_mat.id_materia = materiaSelecionada
+        novo_disp_dia_prof_mat.id_professor = professorSelecionado
+        print(f'Dias que está sendo cadastrado{novo_disp_dia_prof_mat.id_dia}')
+        # VERIFICAR A POSSIBILIDADE DE VINCULAR O MATERIA_PROFESSOR COM A DISPON. DIA. MAT, AO 
+        # INVÉS DE VINCULAR DIA, PROFESSOR, E MATÉRIA
+        novo_disp_dia_prof_mat.save()
+        cont += 1
+    # Retornar à tela de cadastro
     return redirect(tela_materia_professor)
 
+# View responsável por mostrar os vínculos de matéria com professor
 def listar_materia_professor(request):
     professor_sem_vinculo, materia_sem_vinculo = filtrar_prof_mat_sem_vinculo()
 
@@ -149,6 +180,7 @@ def listar_materia_professor(request):
     }
     return render(request, 'qts/listagem/materia_professor.html',context)
 
+# View responsável por deletar o vínculo de matéria com professor
 def deletar_materia_professor(request, id_materia):
     materia_professor = get_object_or_404(Materia_Professor, id_materia=id_materia)
     materia_professor.delete()
@@ -158,8 +190,11 @@ def deletar_materia_professor(request, id_materia):
 
 
 
-## ============================================================================================================
-# FUNÇÕES QUE NÃO SÃO VIEWS
+#### ============================================================================================================
+### FUNÇÕES QUE NÃO SÃO VIEWS
+
+## Retorna os professores que não possuem vínculo com nenhuma matéria e também as matéria que 
+## não possuem vínculo com nenhum professor
 def filtrar_prof_mat_sem_vinculo():
     professor = Professor.objects.all()
     materia = Materia.objects.all()
@@ -171,5 +206,5 @@ def filtrar_prof_mat_sem_vinculo():
     # Filtra os professores e materias que não estão vinculados
     professor_sem_vinculo = [prof for prof in professor if prof.id_professor not in professores_vinculados_ids]
     materia_sem_vinculo = [mat for mat in materia if mat.id_materia not in materias_vinculadas_ids]
-
+    # Retornar professores e matérias sem vínculos
     return professor_sem_vinculo, materia_sem_vinculo
