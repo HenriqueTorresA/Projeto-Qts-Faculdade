@@ -1,17 +1,29 @@
 {% extends 'qts/base.html' %}
 {% block conteudo %}
-<div>
-    <h1><br><br>TELA INICIAL</h1>
-    <h3>Colocar o qts aqui</h3>
-    <table class="table table-bordered">
-        <thead style="background-color: brown; color: aliceblue;">
-            <th>Horários</th>
-            <th>segunda</th>
-            <th>terça</th>
-        </thead>
-        <td>teste</td>
-        <td>teste</td>
-        <td>teste</td>
-    </table>
+<div class="text-center">
+    <h1>Quadro de Tranalho Semanal</h1>
+</div>
+<div class="row">
+    <div class="col-10">
+        <h3>Quadro de Matérias Disponível</h3>
+        <table class="table table-bordered">
+            <thead style="background-color: brown; color: aliceblue;">
+                <th>Domingo</th>
+                <th>Segunda</th>
+                <th>Terça</th>
+                <th>Quarta</th>
+                <th>Quinta</th>
+                <th>Sexta</th>
+                <th>Sábado</th>
+            </thead>
+            {% for dia, disponibilidades in disponibilidades.items %}
+                <tr>
+                    {% for disp in disponibilidades %}
+                        <td>{{ disp.materia }} - {{ disp.professor }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

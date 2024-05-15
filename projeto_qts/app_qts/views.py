@@ -11,7 +11,22 @@ def home(request): #nome que foi especificado no arquivos urls.py
             dia = Dia(nome=nome_dia)
             dia.save()
     # Abrir a tela inicial home.html
-    return render(request,'qts/home.html')
+
+    ### Lógica para montar a tabela Quadro de Matérias Disponível
+    disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
+    #Obter lista dos dias da semana
+    disponibilidade = {dia: [] for dia in ("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado")}
+    disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
+
+    for disp in disp_dia_mat:
+        dia_da_semana = disp.id_dia.nome
+        disponibilidade[dia_da_semana].append({
+            'materia': disp.id_materia.nome,
+            'professor': disp.id_professor.nome
+        })
+
+    print(f'=======================\n {disponibilidade}')
+    return render(request, 'qts/home.html', {'disponibilidades': disponibilidade})
 
 #abrir a tela de cadastro de alunos
 def tela_cadastrar_alunos(request):
@@ -183,6 +198,13 @@ def listar_materia_professor(request):
 # View responsável por deletar o vínculo de matéria com professor
 def deletar_materia_professor(request, id_materia):
     materia_professor = get_object_or_404(Materia_Professor, id_materia=id_materia)
+    # Lógica responsável por realizar um "delete em cascata", ou seja, quando deletar o vínculo d eprof com mat, também vai deletar
+    # o vínculo de prof com mat e com os dias
+    disp_dia_mat_table = Disponibilidade_Dia_Materia.objects.all() # Lista de vínculo com professor, matéria, e dia da semana 
+    disp_dia_mat = [d for d in disp_dia_mat_table] #Obtém os objetos da tabela Disponibilidade_Dia_Materia
+    for c in disp_dia_mat: # Percorrer a lista de objetos
+        if int(c.id_materia.id_materia) == int(materia_professor.id_materia.id_materia) and int(c.id_professor.id_professor) == int(materia_professor.id_professor.id_professor):
+            c.delete()
     materia_professor.delete()
     return redirect(listar_materia_professor)
 
