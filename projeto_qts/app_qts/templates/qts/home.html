@@ -1,6 +1,43 @@
 {% extends 'qts/base.html' %}
 {% block conteudo %}
-<div>
-    <h1><br><br>TELA INICIAL</h1>
+<div class="text-center">
+    <h1>Quadro de Tranalho Semanal</h1>
+</div>
+<div class="row">
+    <div class="col-10">
+        <h3>Quadro de Matérias Disponível Por dias</h3>
+        <table class="table table-bordered">
+            <thead style="background-color: brown; color: aliceblue;">
+                <th>Domingo</th>
+                <th>Segunda</th>
+                <th>Terça</th>
+                <th>Quarta</th>
+                <th>Quinta</th>
+                <th>Sexta</th>
+                <th>Sábado</th>
+            </thead>
+            {% for dia, disponibilidades in disponibilidades.items %}
+                <tbody>
+                    <tr>
+                        
+                    {% for i in numero_dias %}
+                        {% for disp in disponibilidades %}
+                            {% if i == 1 %}
+                                    {% if disp.dia.id_dia == i %}
+                                        <td colspan="1">{{ disp.materia.nome }} - {{ disp.professor.nome }} - {{ disp.dia.nome }}</td>
+                                    {% endif %}
+                            {% endif %}
+                            {% if i == 2 %}
+                                    {% if disp.dia.id_dia == i %}
+                                        <td>{{ disp.materia.nome }} - {{ disp.professor.nome }} - {{ disp.dia.nome }}</td>
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    </tr>
+                </tbody>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

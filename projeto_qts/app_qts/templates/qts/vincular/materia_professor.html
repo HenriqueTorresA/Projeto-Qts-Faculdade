@@ -1,0 +1,146 @@
+{% extends 'qts/base.html' %}
+{% block conteudo %}
+<form action="{% url 'cadastrar_materia_professor' %}" method="post">
+{% csrf_token %}
+<div class="row text-center">
+    <h1>Vincular Matérias com Professores</h1>
+</div>
+
+<div class="row">
+    <div class="col-3" style="background-color: rgb(113, 43, 43) !important"></div>
+    <div class="row text-center col-6 m-0 p-0">
+        <div class="row">
+            <table class="table">
+                <th>Professor</th>
+                <th>Matéria</th>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="col mt-3" id="professor-selecionado">
+                <p class="fst-italic">Selecione um professor</p>
+            </div>
+            <div class="col mt-3">
+                <p>>></p>
+            </div>
+            <div class="col mt-3" id="materia-selecionada">
+                <p class="fst-italic">Selecione uma matéria</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" style="background-color: rgb(113, 43, 43) !important"></div>
+</div>
+
+<!-- Input oculto que preenche o formulário-->
+<input type="hidden" name="materia_id" id="materia-id" value="0" required>
+<input type="hidden" name="professor_id" id="professor-id" value="0" required>
+<!-- botão que finaliza o formulário -->
+<div class="d-grid gap-2 pt-5 mx-auto" style="width: 70%;">
+    <button class="btn btn-outline-success" type="submit" id="button-addon2">Cadastrar</button>
+</div>
+
+<div class="row">
+    <div class="col-6 p-5 order-md-2">
+            
+        <table class="table table-hover table-light">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Matérias</th>
+                </tr>
+            </thead>
+            <!-- Sintaxe específica do Django para laço de repetição:-->
+            {% for materia in materia_sem_vinculo %}
+            <tr>
+                <td>
+                    <div class="form-check ps-5">
+                        <input class="form-check-input" type="radio" name="check-materia" value="{{ materia.id_materia }}" id="check-materia-{{ materia.id_materia }}">
+                        <label class="form-check-label" for="check-materia-{{ materia.id_materia }}">{{ materia.nome }}</label>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+    </div>
+    <div class="col-6 p-5 order-md-1">
+        
+        <table class="table table-hover table-light">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Professores</th>
+                </tr>
+            </thead>
+            <!-- Sintaxe específica do Django para laço de repetição:-->
+            {% for professor in professor %}
+            <tr>
+                <td>
+                    <div class="form-check ps-5">
+                        <input class="form-check-input" type="radio" name="check-professor" value="{{ professor.id_professor }}" id="check-professor-{{ professor.id_professor }}">
+                        <label class="form-check-label" for="check-professor-{{ professor.id_professor }}">{{ professor.nome }}</label>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+    </div>
+</div>
+</form>
+<script>
+    (function(){
+        document.getElementById('materia-id').value = '0';
+        document.getElementById('professor-id').value = '0';
+    })();
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Obtém todos os elementos de rádio
+        const radioButtonsP = document.querySelectorAll('input[type="radio"][name="check-professor"]');
+        const professorIdElement = document.getElementById('professor-id');
+        const radioButtonsM = document.querySelectorAll('input[type="radio"][name="check-materia"]');
+        const materiaIdElement = document.getElementById('materia-id');
+        // Elementos onde será exibido o nome do professor e matéria selecionados
+        const professorSelecionadoElement = document.getElementById('professor-selecionado');
+        const materiaSelecionadoElement = document.getElementById('materia-selecionada');
+
+        // Adiciona um evento de clique para cada rádio button
+        radioButtonsP.forEach(function(radioButton) {
+            radioButton.addEventListener('change', function() {
+                if (this.checked) {
+                    // Obtém o valor do professor selecionado
+                    const professorId = this.value;
+                    
+                    // Encontra o nome do professor correspondente ao ID selecionado
+                    const professorNome = document.querySelector(`label[for="check-professor-${professorId}"]`).innerText;
+                    
+                    // Exibe o nome do professor selecionado na div professor-selecionado
+                    professorSelecionadoElement.innerText = `${professorNome}`;
+
+                    // Atualizar o input oculto
+                    professorIdElement.value = professorId;
+                    console.log(`Professor ${professorNome}, do ID ${professorId} adicionado com sucesso!!`)
+                }
+            });
+        });
+
+        radioButtonsM.forEach(function(radioButton) {
+            radioButton.addEventListener('change', function() {
+                if (this.checked) {
+                    // Obtém o valor da matéria selecionada
+                    const materiaId = this.value;
+                    
+                    // Encontra o nome da matéria correspondente ao ID selecionado
+                    const materiaNome = document.querySelector(`label[for="check-materia-${materiaId}"]`).innerText;
+                    
+                    // Exibe o nome do matéria selecionada na div materia-selecionada
+                    materiaSelecionadoElement.innerText = `${materiaNome}`;
+
+                    //Atualizar o input oculto
+                    materiaIdElement.value = materiaId;
+                    console.log(`Materia ${materiaNome}, do ID ${materiaId} adicionada com sucesso!!`)
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

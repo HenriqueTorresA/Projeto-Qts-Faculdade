@@ -1,31 +1,33 @@
 {% extends 'qts/base.html' %}
 {% block conteudo %}
 <div class="row text-center">
-    <h1>Lista de professores</h1>
+    <h1>Lista de alunos</h1>
 </div>
 <div class="row">
     <div class="col"></div>
     <div class="col-8 justify-content-center">
 
-        <table class="table table-bordered table-striped">
-            
+        <table class="table table-bordered table-striped table-hover">
             <tr>
                 <th class="col-1">id</th>
                 <th class="col-9">nome</th>
+                <th>login</th>
+                <th>senha</th>
             </tr>
             <!-- Sintaxe específica do Django para laço de repetição:-->
-            {% for professor in professores %}
+            {% for aluno in alunos %}
             <tr>
-                <td>{{professor.id_professor}}</td>
-                <td>{{professor.nome}}</td>
+                <td>{{aluno.id_aluno}}</td>
+                <td>{{aluno.nome}}</td>
+                <td> {{aluno.login}} </td>
+                <td> {{aluno.senha}} </td>
                 <td>
-                    {% if professor.id_professor %}
-                    <a href=" {% url 'deletar_professores' professor.id_professor %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
+                    {% if aluno.id_aluno %}
+                    <a href=" {% url 'deletar_alunos' aluno.id_aluno %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
                     {% endif %}
                 </td>
             </tr>
             {% endfor %}
-            
         </table>
     </div>
     <div class="col"></div>

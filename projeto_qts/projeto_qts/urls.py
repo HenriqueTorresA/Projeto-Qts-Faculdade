@@ -37,5 +37,9 @@ urlpatterns = [
     path('tela_cadastrar_materia/',views.tela_cadastrar_materia,name="tela_cadastrar_materia"),
     path('cadastrar_materia/',views.cadastrar_materia,name="cadastrar_materia"),
     path('listar_materia/',views.listar_materia,name="listar_materia"),
-    path('deletar_materia/<int:id_materia>',views.deletar_materia,name='deletar_materia')
+    path('deletar_materia/<int:id_materia>',views.deletar_materia,name='deletar_materia'),
+    path('tela_materia_professor',views.tela_materia_professor, name='tela_materia_professor'),
+    path('cadastrar_materia_professor', views.cadastrar_materia_professor, name='cadastrar_materia_professor'),
+    path('listar_materia_professor', views.listar_materia_professor, name='listar_materia_professor'),
+    path('deletar_materia_professor/<int:id_materia>', views.deletar_materia_professor, name='deletar_materia_professor'),
 ]
