@@ -5,7 +5,7 @@
 </div>
 <div class="row">
     <div class="col-10">
-        <h3>Quadro de Matérias Disponível Por dias</h3>
+        <h3>Quadro de Matérias Disponível</h3>
         <table class="table table-bordered">
             <thead style="background-color: brown; color: aliceblue;">
                 <th>Domingo</th>
@@ -17,25 +17,11 @@
                 <th>Sábado</th>
             </thead>
             {% for dia, disponibilidades in disponibilidades.items %}
-                <tbody>
-                    <tr>
-                        
-                    {% for i in numero_dias %}
-                        {% for disp in disponibilidades %}
-                            {% if i == 1 %}
-                                    {% if disp.dia.id_dia == i %}
-                                        <td colspan="1">{{ disp.materia.nome }} - {{ disp.professor.nome }} - {{ disp.dia.nome }}</td>
-                                    {% endif %}
-                            {% endif %}
-                            {% if i == 2 %}
-                                    {% if disp.dia.id_dia == i %}
-                                        <td>{{ disp.materia.nome }} - {{ disp.professor.nome }} - {{ disp.dia.nome }}</td>
-                                    {% endif %}
-                            {% endif %}
-                        {% endfor %}
+                <tr>
+                    {% for disp in disponibilidades %}
+                        <td>{{ disp.materia }} - {{ disp.professor }}</td>
                     {% endfor %}
-                    </tr>
-                </tbody>
+                </tr>
             {% endfor %}
         </table>
     </div>
