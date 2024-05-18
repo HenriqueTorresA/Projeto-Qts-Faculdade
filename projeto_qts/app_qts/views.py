@@ -16,20 +16,17 @@ def home(request): #nome que foi especificado no arquivos urls.py
     disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
     #Obter lista dos dias da semana
     disponibilidade = {dia: [] for dia in ("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado")}
+    disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
 
     for disp in disp_dia_mat:
         dia_da_semana = disp.id_dia.nome
         disponibilidade[dia_da_semana].append({
-            'materia': disp.id_materia,
-            'professor': disp.id_professor,
-            'dia': disp.id_dia
+            'materia': disp.id_materia.nome,
+            'professor': disp.id_professor.nome
         })
-    numero_dias = range(10)
-    dias_semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
-
 
     print(f'=======================\n {disponibilidade}')
-    return render(request, 'qts/home.html', {'disponibilidades': disponibilidade, 'numero_dias': numero_dias, 'dias_semana': dias_semana})
+    return render(request, 'qts/home.html', {'disponibilidades': disponibilidade})
 
 #abrir a tela de cadastro de alunos
 def tela_cadastrar_alunos(request):
@@ -87,11 +84,10 @@ def cadastrar_professores(request):
 #    return render(request,'qts/professores_cadastro.html')
 
 def listar_professores(request):
-    context = {
-        'professores': Professor.objects.all(),
-        'disponibilidade_dia': Disponibilidade_Dia.objects.all()
+    professores = {
+        'professores': Professor.objects.all()
     }
-    return render(request,'qts/listagem/professores.html',context)
+    return render(request,'qts/listagem/professores.html',professores)
 
 def deletar_professores(request, id_professor):
     professor = get_object_or_404(Professor, id_professor=id_professor)
