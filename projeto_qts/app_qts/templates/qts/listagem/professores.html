@@ -10,22 +10,27 @@
         <table class="table table-bordered table-striped table-hover">
             
             <tr>
-                <th class="col-1">id</th>
+                <th class="col-2">Dias Disponíveis</th>
                 <th class="col-9">nome</th>
             </tr>
             <!-- Sintaxe específica do Django para laço de repetição:-->
             {% for professor in professores %}
             <tr>
-                <td>{{professor.id_professor}}</td>
+                <td>
+                {% for disponibilidade in disponibilidade_dia %}
+                    {% if professor.id_professor == disponibilidade.id_professor.id_professor %}
+                        {{disponibilidade.id_dia.nome}} /
+                    {% endif %}
+                {% endfor %}
+                </td>
                 <td>{{professor.nome}}</td>
                 <td>
                     {% if professor.id_professor %}
                     <a href=" {% url 'deletar_professores' professor.id_professor %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
                     {% endif %}
-                </td>
-            </tr>
+                </td> 
+            </tr> 
             {% endfor %}
-            
         </table>
     </div>
     <div class="col"></div>
