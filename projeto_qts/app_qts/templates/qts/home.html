@@ -8,6 +8,7 @@
         <h3>Quadro de Matérias Disponível Por dias</h3>
         <table class="table table-bordered">
             <thead style="background-color: brown; color: aliceblue;">
+                <th>Professor</th>
                 <th>Domingo</th>
                 <th>Segunda</th>
                 <th>Terça</th>
@@ -16,26 +17,18 @@
                 <th>Sexta</th>
                 <th>Sábado</th>
             </thead>
-            {% for dia, disponibilidades in disponibilidades.items %}
-                <tbody>
-                    <tr>
-                        
-                    {% for i in numero_dias %}
-                        {% for disp in disponibilidades %}
-                            {% if i == 1 %}
-                                    {% if disp.dia.id_dia == i %}
-                                        <td colspan="1">{{ disp.materia.nome }} - {{ disp.professor.nome }} - {{ disp.dia.nome }}</td>
-                                    {% endif %}
-                            {% endif %}
-                            {% if i == 2 %}
-                                    {% if disp.dia.id_dia == i %}
-                                        <td>{{ disp.materia.nome }} - {{ disp.professor.nome }} - {{ disp.dia.nome }}</td>
-                                    {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                    </tr>
-                </tbody>
+            {% for linha in tabela_dados %}
+                <tr>
+                    <td>{{ linha.professor }}</td>
+                    <td>{{ linha.domingo }}</td>
+                    <td>{{ linha.segunda }}</td>
+                    <td>{{ linha.terca }}</td>
+                    <td>{{ linha.quarta }}</td>
+                    <td>{{ linha.quinta }}</td>
+                    <td>{{ linha.sexta }}</td>
+                    <td>{{ linha.sabado }}</td>
+                </tr>
+                
             {% endfor %}
         </table>
     </div>
