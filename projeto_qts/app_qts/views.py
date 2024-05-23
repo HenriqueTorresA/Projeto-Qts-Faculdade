@@ -10,26 +10,40 @@ def home(request): #nome que foi especificado no arquivos urls.py
         for nome_dia in dias:
             dia = Dia(nome=nome_dia)
             dia.save()
-    # Abrir a tela inicial home.html
 
-    ### Lógica para montar a tabela Quadro de Matérias Disponível
+    ### =========================================================================================================
+    # Obter todas as disponibilidades e professores
     disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
-    #Obter lista dos dias da semana
-    disponibilidade = {dia: [] for dia in ("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado")}
+    professores = Professor.objects.all()
+    materias = Materia.objects.all()
+    tabela_dados = [] # Armazena as linhas das tabelas
 
-    for disp in disp_dia_mat:
-        dia_da_semana = disp.id_dia.nome
-        disponibilidade[dia_da_semana].append({
-            'materia': disp.id_materia,
-            'professor': disp.id_professor,
-            'dia': disp.id_dia
+    for prof in professores:
+        # Inicializa um dicionário para armazenar as matérias de cada dia da semana para o professor atual
+        professor_atual = {dia: "-" for dia in range(1, 8)}  # Inicializa todos os dias com "-"
+        for disp in disp_dia_mat:
+            if disp.id_professor.id_professor == prof.id_professor:
+                # Atualiza o dia específico com a matéria correta
+                professor_atual[disp.id_dia.id_dia] = disp.id_materia.nome
+        # Adiciona os dados do professor atual à tabela
+        tabela_dados.append({
+            'professor': prof.nome,
+            'domingo': professor_atual[1],
+            'segunda': professor_atual[2],
+            'terca': professor_atual[3],
+            'quarta': professor_atual[4],
+            'quinta': professor_atual[5],
+            'sexta': professor_atual[6],
+            'sabado': professor_atual[7]
         })
-    numero_dias = range(10)
-    dias_semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+        # Debug: imprime as disponibilidades para cada professor
+        print(f'Professor: {prof.nome}, Domingo: {professor_atual[1]}'+
+              f'Segunda: {professor_atual[2]}, Terça: {professor_atual[3]},' +
+              f'Quarta: {professor_atual[4]}, Quinta: {professor_atual[5]},' +
+              f'Sexta: {professor_atual[6]}, Sábado: {professor_atual[7]}')
+    contexto = {'tabela_dados': tabela_dados}
+    return render(request, 'qts/home.html', contexto)
 
-
-    print(f'=======================\n {disponibilidade}')
-    return render(request, 'qts/home.html', {'disponibilidades': disponibilidade, 'numero_dias': numero_dias, 'dias_semana': dias_semana})
 
 #abrir a tela de cadastro de alunos
 def tela_cadastrar_alunos(request):
@@ -79,13 +93,6 @@ def cadastrar_professores(request):
         disponibilidade.save()
     return render(request,'qts/cadastro/professores_cadastro.html')
 
-#def cadastrar_disponibilidade_dia_professor(request, id_professor, id_dia):
-#    nova_materia_professor = Disponibilidade_Dia()
-#    nova_materia_professor.id_professor = id_professor
-#    nova_materia_professor.id_dia = id_dia
-#    nova_materia_professor.save()
-#    return render(request,'qts/professores_cadastro.html')
-
 def listar_professores(request):
     context = {
         'professores': Professor.objects.all(),
@@ -127,7 +134,9 @@ def tela_materia_professor(request):
         'professores_ids':[str(professor.id_professor) for professor in professores],
         'materia': Materia.objects.all(),
         'materia_professor': Materia_Professor.objects.all(),
-        'materia_sem_vinculo': materia_sem_vinculo
+        'materia_sem_vinculo': materia_sem_vinculo,
+        'dia_professor': Disponibilidade_Dia.objects.all()
+
     }
     return render(request, 'qts/vincular/materia_professor.html', context)
 
@@ -137,15 +146,24 @@ def cadastrar_materia_professor(request):
     novo_mateira_professor = Materia_Professor()
     materiaId = request.POST.get('materia_id') # pega do HTML o elemento do nome materia_id
     professorId = request.POST.get('professor_id') # pega do HTML o elemento do nome professor_id
+    diaId = request.POST.get('dia_id')
+    dias_professor = []
     # Obtém todos os vínculos de matéria com professor que já existem
     materiaProfessor = Materia_Professor.objects.all()
-    
+    disp_dia = Disponibilidade_Dia.objects.all()
+    for d in disp_dia:
+        if int(d.id_professor.id_professor) == int(professorId):
+            dias_professor.append(int(d.id_dia.id_dia))
+    if int(diaId) not in dias_professor:
+        return render(request, 'qts/erros/erro_semProf_semId.html')
+            
+
     # Não permitir que seja cadastrado um novo relacionamento de uma matéria que já tenha professor
     id_materia_lista = []
     for matprof in materiaProfessor: #Objeto que lista os vínculos existentes
         id_materia_lista.append(matprof.id_materia.id_materia) #Adiciona o id_materia na lista
     if int(materiaId) in id_materia_lista: #Se a matéria já existir nessa lista das matérias que já temos
-        return redirect(tela_materia_professor) #Então voltar à tela de cadastro sem salvar nada
+        return render(request, 'qts/erros/erro_ja_tem_MateriaProfessor.html') #Então voltar à tela de cadastro sem salvar nada
 
     # Lidar com o caso em que a matéria ou o professor não existe
     try:
@@ -156,34 +174,37 @@ def cadastrar_materia_professor(request):
     #Capturar a exceção que acusa que não existe valores em materia ou professor
     except (Materia.DoesNotExist, Professor.DoesNotExist):
         return render(request, 'qts/erros/erro_semProf_semId.html') # Retornar tela de erro
+    
+    #pegar o id do dia selecionado em inteiro e gravar em uma variável do tipo objeto de dia
+    for d in disp_dia:
+        if int(d.id_dia.id_dia) == int(diaId):
+            diaSelecionado = d.id_dia
+    
+    # Não permitir que seja cadastrado uma matéria com o professor em que o professor já esteja ocupado neste dia
+    disp_prof_dia_mat = Disponibilidade_Dia_Materia.objects.all()
+    dias_ocupados = [] # Lista para armazenar os dias do professor que estão ocupados
+    for d in disp_prof_dia_mat:
+        if d.id_professor.id_professor == professorSelecionado.id_professor:
+            dias_ocupados.append(int(d.id_dia.id_dia)) # Add os dias que o prof já tem na Disponibilidade_Dia_Materia
+    if int(diaSelecionado.id_dia) in dias_ocupados:
+        return render(request, 'qts/erros/erro_professor_ocupado.html') # Retornar tela de erro do dia
+
+    ##### Pegar o professor que foi vinculado com a matéria e vincular 
+    ##### com o dia da semana escolhido
+    novo_disp_dia_prof_mat = Disponibilidade_Dia_Materia()
+
+    #Salvar o novo novo_disp_dia_prof_mat passando o prof, mat e o dia selecionado
+    novo_disp_dia_prof_mat.id_dia = diaSelecionado
+    novo_disp_dia_prof_mat.id_materia = materiaSelecionada
+    novo_disp_dia_prof_mat.id_professor = professorSelecionado
+    novo_disp_dia_prof_mat.save()    
+
     # Se chegar até aqui, então salvar o novo registro de vínculo de matéria com professor
     novo_mateira_professor.id_materia = materiaSelecionada
     novo_mateira_professor.id_professor = professorSelecionado
     novo_mateira_professor.save()
 
-    ##### Pegar o professor que foi vinculado com a matéria e vincular 
-    ##### com os dias em que ele tem tem disponível
-    disp_dia_prof = Disponibilidade_Dia.objects.all() #Obter os dias dos professores
-    dias_completos = [c for c in disp_dia_prof] # Pegar todos os dias de todos os professores
-    dias_prof = [] # Lista que armazenará somente os dias do professor que foi informado
-    # Pegar a lista dos dias em que este professor tem disponibilidade
-    for d in dias_completos: # Navegar pelos dias de todos os professores
-        #Se chegar nos dias do professor que foi informado na tela, adicionar na lista dias_prof
-        if str(d.id_professor.id_professor) == str(professorSelecionado.id_professor):
-            dias_prof.append(d.id_dia)
-    ### Vincular os dias do professor com o professor e a matéria selecionados
-    cont = 0 # Contador que adicionará no for o id da disp. dia
-    for d in dias_prof: # Percorrer a lista de dias do professor selecionado
-        novo_disp_dia_prof_mat = Disponibilidade_Dia_Materia()
-        novo_disp_dia_prof_mat.id_dia = d
-        novo_disp_dia_prof_mat.id_materia = materiaSelecionada
-        novo_disp_dia_prof_mat.id_professor = professorSelecionado
-        print(f'Dias que está sendo cadastrado{novo_disp_dia_prof_mat.id_dia}')
-        # VERIFICAR A POSSIBILIDADE DE VINCULAR O MATERIA_PROFESSOR COM A DISPON. DIA. MAT, AO 
-        # INVÉS DE VINCULAR DIA, PROFESSOR, E MATÉRIA
-        novo_disp_dia_prof_mat.save()
-        cont += 1
-    # Retornar à tela de cadastro
+
     return redirect(tela_materia_professor)
 
 # View responsável por mostrar os vínculos de matéria com professor
@@ -193,7 +214,7 @@ def listar_materia_professor(request):
     context = {
         'professor': Professor.objects.all(),
         'materia': Materia.objects.all(),
-        'materia_professor': Materia_Professor.objects.all(),
+        'materia_professor_dia': Disponibilidade_Dia_Materia.objects.all(),
         'professor_sem_vinculo': professor_sem_vinculo,
         'materia_sem_vinculo': materia_sem_vinculo
     }

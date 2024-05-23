@@ -18,15 +18,17 @@
         <table class="table table-bordered table-striped table-hover professor-column">
             <thead class="table-dark">
                 <tr>
-                    <th class="col-5">Materia</th>
-                    <th class="col-6">Professor</th>
+                    <th class="col-5">Professor</th>
+                    <th class="col-4">Materia</th>
+                    <th class="col-3">Dia da Semana</th>
                 </tr>
             </thead>
                 <!-- Sintaxe específica do Django para laço de repetição:-->
-            {% for materia_professor in materia_professor %}
+            {% for materia_professor in materia_professor_dia %}
                 <tr>
-                    <td>{{materia_professor.id_materia.nome}}</td>
                     <td>{{materia_professor.id_professor.nome}}</td>
+                    <td>{{materia_professor.id_materia.nome}}</td>
+                    <td>{{ materia_professor.id_dia.nome }}</td>
                     <td>
                         {% if materia_professor.id_materia and materia_professor.id_professor %}
                             <a href=" {% url 'deletar_materia_professor' materia_professor.id_materia.id_materia %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
