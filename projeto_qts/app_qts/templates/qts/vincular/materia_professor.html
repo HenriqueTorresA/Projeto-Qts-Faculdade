@@ -12,6 +12,7 @@
         <div class="row">
             <table class="table">
                 <th>Professor</th>
+                <th>Dia da Semana</th>
                 <th>Matéria</th>
             </table>
         </div>
@@ -19,6 +20,25 @@
         <div class="row">
             <div class="col mt-3" id="professor-selecionado">
                 <p class="fst-italic">Selecione um professor</p>
+            </div>
+            <div class="col mt-3">
+                <p>>></p>
+            </div>
+            <div class="col mt-3" id="dia-selecionado">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                      Dia da Semana
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                      <li><button class="dropdown-item" id="drop1"type="button" value="1">Domingo</button></li>
+                      <li><button class="dropdown-item" id="drop2"type="button" value="2">Segunda</button></li>
+                      <li><button class="dropdown-item" id="drop3"type="button" value="3">Terça</button></li>
+                      <li><button class="dropdown-item" id="drop4"type="button" value="4">Quarta</button></li>
+                      <li><button class="dropdown-item" id="drop5"type="button" value="5">Quinta</button></li>
+                      <li><button class="dropdown-item" id="drop6"type="button" value="6">Sexta</button></li>
+                      <li><button class="dropdown-item" id="drop7"type="button" value="7">Sábado</button></li>
+                    </ul>
+                </div>
             </div>
             <div class="col mt-3">
                 <p>>></p>
@@ -33,6 +53,7 @@
 
 <!-- Input oculto que preenche o formulário-->
 <input type="hidden" name="materia_id" id="materia-id" value="0" required>
+<input type="hidden" name="dia_id" id="dia-id" value="0" required>
 <input type="hidden" name="professor_id" id="professor-id" value="0" required>
 <!-- botão que finaliza o formulário -->
 <div class="d-grid gap-2 pt-5 mx-auto" style="width: 70%;">
@@ -54,7 +75,7 @@
                 <td>
                     <div class="form-check ps-5">
                         <input class="form-check-input" type="radio" name="check-materia" value="{{ materia.id_materia }}" id="check-materia-{{ materia.id_materia }}">
-                        <label class="form-check-label" for="check-materia-{{ materia.id_materia }}">{{ materia.nome }}</label>
+                        <label class="form-check-label" for="check-materia-{{ materia.id_materia }}"><strong>{{ materia.nome }}</strong></label>
                     </div>
                 </td>
             </tr>
@@ -67,21 +88,27 @@
         <table class="table table-hover table-light">
             <thead class="table-dark">
                 <tr>
-                    <th class="text-center">Professores</th>
+                    <th class="text-center">Professores e suas Disponibilidades</th>
                 </tr>
             </thead>
             <!-- Sintaxe específica do Django para laço de repetição:-->
             {% for professor in professor %}
-            <tr>
-                <td>
-                    <div class="form-check ps-5">
-                        <input class="form-check-input" type="radio" name="check-professor" value="{{ professor.id_professor }}" id="check-professor-{{ professor.id_professor }}">
-                        <label class="form-check-label" for="check-professor-{{ professor.id_professor }}">{{ professor.nome }}</label>
-                    </div>
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        <div class="form-check ps-5">
+                            <input class="form-check-input" type="radio" name="check-professor" value="{{ professor.id_professor }}" id="check-professor-{{ professor.id_professor }}">
+                            <label class="form-check-label" for="check-professor-{{ professor.id_professor }}">
+                                <strong>{{ professor.nome }}</strong>   
+                                {% for d in dia_professor %}
+                                    {% if professor.id_professor == d.id_professor.id_professor %}
+                                        - {{ d.id_dia.nome }} 
+                                    {% endif %}
+                                {% endfor %}
+                            </label>
+                        </div>
+                    </td>
+                </tr>
             {% endfor %}
-            
         </table>
     </div>
 </div>
@@ -102,6 +129,82 @@
         // Elementos onde será exibido o nome do professor e matéria selecionados
         const professorSelecionadoElement = document.getElementById('professor-selecionado');
         const materiaSelecionadoElement = document.getElementById('materia-selecionada');
+
+        // Obtenha os elementos do botão de dia
+        const dia1 = document.getElementById('drop1');
+        const dia2 = document.getElementById('drop2');
+        const dia3 = document.getElementById('drop3');
+        const dia4 = document.getElementById('drop4');
+        const dia5 = document.getElementById('drop5');
+        const dia6 = document.getElementById('drop6');
+        const dia7 = document.getElementById('drop7');
+        const inputField = document.getElementById('dia-id');
+        const inputLayout = document.getElementById('dropdownMenu2');
+
+        // Adicione um listener de evento para o evento de clique no botão suspenso
+        dia1.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
+        dia2.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
+        dia3.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
+        dia4.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
+        dia5.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
+        dia6.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
+        dia7.addEventListener('click', (event) => {
+            // Obtenha o valor do botão clicado
+            const text = event.target.textContent;
+            const value = event.target.value;
+
+            // Defina o atributo `value` do campo de entrada para o valor do botão
+            inputField.value = value;
+            inputLayout.textContent = text;
+        });
 
         // Adiciona um evento de clique para cada rádio button
         radioButtonsP.forEach(function(radioButton) {
