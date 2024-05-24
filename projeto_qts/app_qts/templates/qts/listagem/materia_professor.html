@@ -1,26 +1,21 @@
 {% extends 'qts/base.html' %}
 {% block conteudo %}
-<div class="row text-center p-5">
-    <h1>Lista de vínculo de Professores com Matérias</h1>
+<div class="row text-center px-5">
+    <h1>Lista de vínculo de Professores com Matérias</h1><hr>
 </div>
-<div class="row text-center pt-5 pb-5">
-    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
-    <div class="col">
-        <h3>Registros com vínculo</h3>
-    </div>
-    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
-</div>
-
+<br>
 <div class="row">
-    <div class="col"></div>
+    <div class="col cor-padrao-pagina"></div>
     <div class="col-8 justify-content-center">
+        <h3 class="text-center">Registros com vínculo</h3>
 
         <table class="table table-bordered table-striped table-hover professor-column">
             <thead class="table-dark">
                 <tr>
                     <th class="col-5">Professor</th>
-                    <th class="col-4">Materia</th>
-                    <th class="col-3">Dia da Semana</th>
+                    <th class="col-5">Materia</th>
+                    <th class="col-2">Dia da Semana</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
                 <!-- Sintaxe específica do Django para laço de repetição:-->
@@ -39,15 +34,15 @@
             
         </table>
     </div>
-    <div class="col"></div>
+    <div class="col cor-padrao-pagina"></div>
 </div>
-<br><br><br><br><br><br>
+<br>
 <div class="row text-center pt-5">
-    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
+    <div class="col-4 cor-padrao-pagina"></div>
     <div class="col">
         <h3>Registros sem vínculo</h3>
     </div>
-    <div class="col-4" style="background-color: rgb(113, 43, 43) !important"></div>
+    <div class="col-4 cor-padrao-pagina"></div>
 </div>
 <div class="row px-5">
     <div class="col p-5">

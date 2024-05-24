@@ -2,30 +2,34 @@
 {% block conteudo %}
 <form action="{% url 'cadastrar_alunos' %}" method="post">
     {% csrf_token %}
-    <div class="container justify-content-center align-items-center col-6">
-        <h1>Cadastro de alunos</h1>
-        <h4>Informações do aluno</h4>
-        <br>
-        
-        <div class="position-relative my-4 row">
-            <div class="input-group ps-4 position-relative start-0 align-bottom">
-                <input name="nome" type="text" class="form-control" placeholder="Nome do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+    <div class="row">
+        <div class="col-3 cor-padrao-pagina"></div>
+        <div class="container justify-content-center align-items-center col-6">
+            <h1>Cadastro de alunos</h1>
+            <h4>Informações do aluno</h4>
+            <br>
+            
+            <div class="position-relative my-4 row">
+                <div class="input-group ps-4 position-relative start-0 align-bottom">
+                    <input name="nome" type="text" class="form-control" placeholder="Nome do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+                </div>
+            </div> 
+            <div class="position-relative my-4 row">
+                <div class="input-group ps-4 position-relative start-0 align-bottom">
+                    <input name="login" type="text" class="form-control" placeholder="Login do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+                </div>
+            </div> 
+            <div class="position-relative my-4 row">
+                <div class="input-group ps-4 position-relative start-0 align-bottom">
+                    <input name="senha" type="text" class="form-control" placeholder="Senha do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+                </div>
+            </div>        
+            <br><br><hr>
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-success form-control-sm" type="submit" id="button-addon2">Cadastrar</button>
             </div>
-        </div> 
-        <div class="position-relative my-4 row">
-            <div class="input-group ps-4 position-relative start-0 align-bottom">
-                <input name="login" type="text" class="form-control" placeholder="Login do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
-            </div>
-        </div> 
-        <div class="position-relative my-4 row">
-            <div class="input-group ps-4 position-relative start-0 align-bottom">
-                <input name="senha" type="text" class="form-control" placeholder="Senha do Aluno" aria-label="Recipient's username" aria-describedby="button-addon2" required>
-            </div>
-        </div>        
-        <br><br><hr>
-        <div class="d-grid gap-2">
-            <button class="btn btn-outline-success form-control-sm" type="submit" id="button-addon2">Cadastrar</button>
         </div>
+        <div class="col-3 cor-padrao-pagina"></div>
     </div>
 </form>
 {% endblock %}
