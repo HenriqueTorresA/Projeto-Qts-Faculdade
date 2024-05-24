@@ -7,26 +7,28 @@
 </div>
 
 <div class="row">
-    <div class="col-3" style="background-color: rgb(113, 43, 43) !important"></div>
-    <div class="row text-center col-6 m-0 p-0">
+    <div class="col-2 cor-padrao-pagina"></div>
+    <div class="row col-8 m-0 p-0">
         <div class="row">
-            <table class="table">
+            <table class="table text-center me-5">
                 <th>Professor</th>
                 <th>Dia da Semana</th>
                 <th>Matéria</th>
             </table>
         </div>
 
-        <div class="row">
-            <div class="col mt-3" id="professor-selecionado">
+        <div class="row text-center">
+            <div class=""></div>
+            <div class="ms-3 col-3 mt-3" id="professor-selecionado">
                 <p class="fst-italic">Selecione um professor</p>
+
             </div>
-            <div class="col mt-3">
+            <div class="ms-3 col-1 mt-3">
                 <p>>></p>
             </div>
-            <div class="col mt-3" id="dia-selecionado">
+            <div class="ms-3 col-3 mt-3" id="dia-selecionado">
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
                       Dia da Semana
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
@@ -40,15 +42,15 @@
                     </ul>
                 </div>
             </div>
-            <div class="col mt-3">
+            <div class="ms-3 col-1 mt-3">
                 <p>>></p>
             </div>
-            <div class="col mt-3" id="materia-selecionada">
+            <div class="ms-3 col-3 mt-3" id="materia-selecionada">
                 <p class="fst-italic">Selecione uma matéria</p>
             </div>
         </div>
     </div>
-    <div class="col-3" style="background-color: rgb(113, 43, 43) !important"></div>
+    <div class="col-2 cor-padrao-pagina"></div>
 </div>
 
 <!-- Input oculto que preenche o formulário-->
@@ -218,6 +220,8 @@
                     
                     // Exibe o nome do professor selecionado na div professor-selecionado
                     professorSelecionadoElement.innerText = `${professorNome}`;
+                    professorSelecionadoElement.classList.add("fw-bold");
+                    professorSelecionadoElement.classList.add("fst-italic");
 
                     // Atualizar o input oculto
                     professorIdElement.value = professorId;
@@ -237,6 +241,8 @@
                     
                     // Exibe o nome do matéria selecionada na div materia-selecionada
                     materiaSelecionadoElement.innerText = `${materiaNome}`;
+                    materiaSelecionadoElement.classList.add("fst-italic");
+                    materiaSelecionadoElement.classList.add("fw-bold");
 
                     //Atualizar o input oculto
                     materiaIdElement.value = materiaId;

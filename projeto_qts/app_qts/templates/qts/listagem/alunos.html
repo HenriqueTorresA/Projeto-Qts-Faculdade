@@ -1,19 +1,20 @@
 {% extends 'qts/base.html' %}
 {% block conteudo %}
 <div class="row text-center">
-    <h1>Lista de alunos</h1>
+    <h1>Lista de alunos</h1><hr>
 </div>
 <div class="row">
-    <div class="col"></div>
+    <div class="col cor-padrao-pagina"></div>
     <div class="col-8 justify-content-center">
-        <p>POSDIFJ SDFOGKIJSXDPFOKLVJ XDFPOKVJ XCVPLBKJX CVPBLKSJ VPLK</p>
 
         <table class="table table-bordered table-striped table-hover">
             <tr>
-                <th class="col-1">id</th>
-                <th class="col-9">nome</th>
-                <th>login</th>
-                <th>senha</th>
+                <thead class="table-dark">
+                    <th class="col-1">id</th>
+                    <th class="col-9">nome</th>
+                    <th>login</th>
+                    <th>senha</th>
+                </thead>
             </tr>
             <!-- Sintaxe específica do Django para laço de repetição:-->
             {% for aluno in alunos %}
@@ -31,6 +32,6 @@
             {% endfor %}
         </table>
     </div>
-    <div class="col"></div>
+    <div class="col cor-padrao-pagina"></div>
 </div>
 {% endblock %}
