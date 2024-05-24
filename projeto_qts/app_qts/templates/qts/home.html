@@ -2,12 +2,14 @@
 {% block conteudo %}
 <div class="text-center">
     <h1>Quadro de Tranalho Semanal</h1>
+    <hr><br><br>
 </div>
 <div class="row">
+    <div class="col-1 cor-padrao-pagina"></div>
     <div class="col-10">
-        <h3>Quadro de Matérias Disponível Por dias</h3>
-        <table class="table table-bordered">
-            <thead style="background-color: brown; color: aliceblue;">
+        <h3 class="text-center">Quadro de Matérias Disponível Por dias</h3>
+        <table class="table table-bordered border border-dark">
+            <thead class="cor-padrao-pagina">
                 <th>Professor</th>
                 <th>Domingo</th>
                 <th>Segunda</th>
@@ -32,5 +34,35 @@
             {% endfor %}
         </table>
     </div>
+    <div class="col-1 cor-padrao-pagina"></div>
+</div><br><br>
+<div class="row">
+    <div class="col-1 cor-padrao-pagina"></div>
+    <div class="col-10">
+        <h3 class="text-center">Quadro de Trabalho Semanal Sugerido</h3>
+        <table class="table table-bordered border border-dark">
+            <thead class="cor-padrao-pagina">
+                <th>Professor</th>
+                <th>Domingo</th>
+                <th>Segunda</th>
+                <th>Terça</th>
+                <th>Quarta</th>
+                <th>Quinta</th>
+                <th>Sexta</th>
+                <th>Sábado</th>
+            </thead>
+            <tr>
+                <td> linha.professor </td>
+                <td> linha.domingo </td>
+                <td> linha.segunda </td>
+                <td> linha.terca </td>
+                <td> linha.quarta </td>
+                <td> linha.quinta </td>
+                <td> linha.sexta </td>
+                <td> linha.sabado </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-1 cor-padrao-pagina"></div>
 </div>
 {% endblock %}
