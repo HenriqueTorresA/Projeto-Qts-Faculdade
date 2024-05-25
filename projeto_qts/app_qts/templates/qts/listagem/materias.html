@@ -11,19 +11,21 @@
             
             <tr>
                 <thead class="table-dark">
-                    <th class="col-1">id</th>
-                    <th class="col-9">Nome</th>
+                    <th class="col-9">Nome da Matéria</th>
                     <th>Ações</th>
                 </thead>
             </tr>
             <!-- Sintaxe específica do Django para laço de repetição:-->
-            {% for materia in materia %}
+            {% for materia in tabela_materias %}
                 <tr>
-                    <td>{{materia.id_materia}}</td>
                     <td>{{materia.nome}}</td>
                     <td>
                         {% if materia.id_materia %}
-                            <a href=" {% url 'deletar_materia' materia.id_materia %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
+                            <a href=" {% url 'deletar_materia' materia.id_materia %} " 
+                                class="btn btn-outline-danger btn-sm"
+                                style="padding-left: 40%; padding-right: 40%;">
+                                    Deletar
+                            </a>
                         {% endif %}
                     </td>
                 </tr>

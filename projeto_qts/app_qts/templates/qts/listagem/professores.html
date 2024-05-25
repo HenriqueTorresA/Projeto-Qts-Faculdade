@@ -1,7 +1,7 @@
 {% extends 'qts/base.html' %}
 {% block conteudo %}
 <div class="row text-center">
-    <h1>Lista de professores</h1><hr>
+    <h1>Professores</h1><hr>
 </div>
 <div class="row">
     <div class="col cor-padrao-pagina"></div>
@@ -11,25 +11,23 @@
             
             <tr>
                 <thead class="table-dark">
-                    <th class="col-5">Dias Disponíveis</th>
-                    <th class="col-5">Nome</th>
+                    <th class="col-4">Nome do Professor</th>
+                    <th class="col-5">Dias de Disponibilidade</th>
                     <th>Ações</th>
                 </thead>
             </tr>
             <!-- Sintaxe específica do Django para laço de repetição:-->
-            {% for professor in professores %}
+            {% for professor in tabela_professores %}
             <tr>
-                <td>
-                {% for disponibilidade in disponibilidade_dia %}
-                    {% if professor.id_professor == disponibilidade.id_professor.id_professor %}
-                        {{disponibilidade.id_dia.nome}} /
-                    {% endif %}
-                {% endfor %}
-                </td>
-                <td>{{professor.nome}}</td>
+                <td>{{ professor.nome }}</td>
+                <td>{{ professor.disponibilidade }}</td>
                 <td>
                     {% if professor.id_professor %}
-                    <a href=" {% url 'deletar_professores' professor.id_professor %} " class="btn btn-outline-danger btn-sm px-5">Deletar</a>
+                    <a href=" {% url 'deletar_professores' professor.id_professor %} " 
+                        style="padding-left: 40%; padding-right: 40%;" 
+                        class="btn btn-outline-danger btn-sm">
+                            Deletar
+                    </a>
                     {% endif %}
                 </td> 
             </tr> 

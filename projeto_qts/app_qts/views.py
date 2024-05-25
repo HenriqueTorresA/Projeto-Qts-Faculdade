@@ -15,7 +15,6 @@ def home(request): #nome que foi especificado no arquivos urls.py
     # Obter todas as disponibilidades e professores
     disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
     professores = Professor.objects.all()
-    materias = Materia.objects.all()
     tabela_dados = [] # Armazena as linhas das tabelas
 
     for prof in professores:
@@ -60,12 +59,32 @@ def cadastrar_alunos(request):
     
 # Exibir todos os alunos já cadastrados no SQLite em uma nova página
 def listar_alunos(request):
-    alunos = { # cria um dicionário de alunos
-        'alunos': Aluno.objects.all() # pega todos os objetos da classe Aluno
-    }
-    # inicia a página de listagem de alunos passando o dicionário como parâmetro
-    # com isso o HTML poderá utilizar estes dados do dicionário para mostrá-lo na tela
-    return render(request,'qts/listagem/alunos.html/',alunos) 
+    todos_alunos = Aluno.objects.all() # Objetos alunos
+    todos_alunos_ordenados = [] # receberá os alunos ordenados
+    tabela_alunos = [] # Receberá a tabela a ser mostrada no tamplate
+
+    ### ORDENANDO A LISTA DE ALUNOS
+    # adicionando os alunos na lista a ser ordenada
+    for als in todos_alunos:
+        todos_alunos_ordenados.append(str(als.nome))
+    # chamando o algoritmo quick sort
+    todos_alunos_ordenados = ordena_nomes_quickSort(todos_alunos_ordenados)
+    # Testando o resultado no terminal 
+    print(f'Lista de alunos ordenada: \n  {todos_alunos_ordenados}')
+
+    ### MONTANDO A TABELA DE ALUNOS
+    for als_ord in todos_alunos_ordenados:
+        for als in todos_alunos: # Comparar os alunos ordenados para mostrar os objetos
+            if str(als_ord) == str(als.nome):
+                tabela_alunos.append({
+                    'id_aluno': als.id_aluno,
+                    'nome': als.nome,
+                    'login': als.login,
+                    'senha': als.senha
+                })
+
+    context = {'tabela_alunos': tabela_alunos}
+    return render(request,'qts/listagem/alunos.html/',context) 
    
 def deletar_alunos(request, id_aluno):
     aluno = get_object_or_404(Aluno, id_aluno=id_aluno)
@@ -94,10 +113,36 @@ def cadastrar_professores(request):
     return render(request,'qts/cadastro/professores_cadastro.html')
 
 def listar_professores(request):
-    context = {
-        'professores': Professor.objects.all(),
-        'disponibilidade_dia': Disponibilidade_Dia.objects.all()
-    }
+    todos_professores = Professor.objects.all() # Objetos professores
+    disponibilidade = Disponibilidade_Dia.objects.all()
+    todos_prof_ordenados = [] # receberá os professores ordenados
+    tabela_professores = [] # Receberá a tabela a ser mostrada no tamplate
+
+    ### ORDENANDO A LISTA DE ALUNOS
+    # adicionando os professores na lista a ser ordenada
+    for prof in todos_professores:
+        todos_prof_ordenados.append(str(prof.nome))
+    # chamando o algoritmo quick sort
+    todos_prof_ordenados = ordena_nomes_quickSort(todos_prof_ordenados)
+    # Testando o resultado no terminal 
+    print(f'Lista de professores ordenada: \n  {todos_prof_ordenados}')
+
+    ### MONTANDO A TABELA DE ALUNOS
+    for prof_ord in todos_prof_ordenados:
+        for prof in todos_professores: # Comparar os professores ordenados para mostrar os objetos
+            if str(prof_ord) == str(prof.nome):
+                dias_disponiveis = [] # Iniciar os dias disponíveis deste professor
+                for disp in disponibilidade:
+                    if disp.id_professor.id_professor == prof.id_professor:
+                        dias_disponiveis.append(f'{disp.id_dia.nome}/ ') # Adicionar os dias disponíveis
+                tabela_professores.append({ # Montar a linha deste professor
+                    'id_professor': prof.id_professor,
+                    'nome': prof.nome,
+                    'disponibilidade': ''.join(dias_disponiveis)
+                })
+    # Criar o Dicionário contendo as linhas da tabela
+    context = {'tabela_professores': tabela_professores}
+
     return render(request,'qts/listagem/professores.html',context)
 
 def deletar_professores(request, id_professor):
@@ -115,10 +160,30 @@ def cadastrar_materia(request):
     return render(request,'qts/cadastro/materias_cadastro.html')
 
 def listar_materia(request):
-    context = {
-        'materia': Materia.objects.all(),
-        'materia_professor': Materia_Professor.objects.all()
-    }
+    
+    todas_materias = Materia.objects.all() # Objetos materias
+    todas_materias_ordenadas = [] # receberá as materias ordenadas
+    tabela_materias = [] # Receberá a tabela a ser mostrada no tamplate
+
+    ### ORDENANDO A LISTA DE MATERIAS
+    # adicionando as materias na lista a ser ordenada
+    for mat in todas_materias:
+        todas_materias_ordenadas.append(str(mat.nome))
+    # chamando o algoritmo quick sort
+    todas_materias_ordenadas = ordena_nomes_quickSort(todas_materias_ordenadas)
+    # Testando o resultado no terminal 
+    print(f'Lista de materias ordenada: \n  {todas_materias_ordenadas}')
+
+    ### MONTANDO A TABELA DE MATERIAS
+    for mat_ord in todas_materias_ordenadas:
+        for mat in todas_materias: # Comparar as materias ordenadas para mostrar os objetos
+            if str(mat_ord) == str(mat.nome):
+                tabela_materias.append({
+                    'id_materia': mat.id_materia,
+                    'nome': mat.nome
+                })
+
+    context = {'tabela_materias': tabela_materias}
     return render(request,'qts/listagem/materias.html',context)
 
 def deletar_materia(request, id_materia):
@@ -255,3 +320,15 @@ def filtrar_prof_mat_sem_vinculo():
     materia_sem_vinculo = [mat for mat in materia if mat.id_materia not in materias_vinculadas_ids]
     # Retornar professores e matérias sem vínculos
     return professor_sem_vinculo, materia_sem_vinculo
+
+def ordena_nomes_quickSort(array_list):
+    
+    if len(array_list) <= 1:
+        return array_list
+    
+    pivo = array_list[0]
+    menores = [x for x in array_list[1:] if x < pivo]
+    iguais = [x for x in array_list[1:] if x == pivo]
+    maiores = [x for x in array_list[1:] if x > pivo]
+    
+    return ordena_nomes_quickSort(menores) + [pivo] + iguais + ordena_nomes_quickSort(maiores)
