@@ -2,3 +2,7 @@
     background-color: brown;
     color: aliceblue;
 }
+.botao-deletar {
+    padding-left: 40%; 
+    padding-right: 40%;
+}
