@@ -1,0 +1,24 @@
+{% extends 'qts/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados da Pesquisa</title>
+</head>
+<body>
+    <h1>Resultados da Pesquisa</h1>
+
+    <!-- Lista de resultados da pesquisa -->
+    <ul>
+        {% for resultado in resultados_pesquisa %}
+            <li>{{ resultado }}</li>
+        {% empty %}
+            <li>Nenhum resultado encontrado.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Link de volta à página inicial -->
+    <a href="{% url 'home' %}">Voltar para a página inicial</a>
+</body>
+</html>

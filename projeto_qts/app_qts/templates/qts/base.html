@@ -16,6 +16,8 @@
   
   <!-- bootstrap app_qts css -->
   <link rel="stylesheet" type="text/css" href="{% static ' app_qts/css/bootstrap.css' %}" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 
   <!-- fonts style -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -33,29 +35,33 @@
   <link href="{% static 'app_qts/css2/style.css' %}" rel="stylesheet" />
   <!-- responsive style -->
 
-  
-  <title>Cadastro de QTS</title>
+
+  <title>Unialfa - Cadastro de QTS</title>
 </head>
 
 <body>
-  <!-- Navbar -->
-  <div style="background-color: rgb(255, 255, 255);" class="p-1">
-    <nav style="background-color: rgb(60, 14, 14) !important; color: white;" class="navbar navbar-expand-lg navbar-dark bg-dark rounded-3">
-      <div class="container-fluid">
-        <!-- Adicionando a imagem como logo -->
-        <a class="navbar-brand me-5 pe-5" href="{% url 'home' %}">
-          <img src="{% static 'app_qts/images/logo2.jpeg' %}" alt="Logo">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Cadastrar
+<!-- Navbar -->
+<div style="background-color: rgb(255, 255, 255);" class="p-1">
+  <nav style="background-color: rgb(60, 14, 14) !important; color: white;" class="navbar navbar-expand-lg navbar-dark bg-dark rounded-3">
+    <div class="container-fluid">
+      <a class="navbar-brand me-5 pe-5" href="{% url 'home' %}">
+        <img src="{% static 'app_qts/images/logo3.jpeg' %}" alt="Logo">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Formulário de pesquisa -->
+        <form class="d-flex" action="{% url 'pesquisa' %}" method="GET">
+          <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Pesquisar" name="q">
+          <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Cadastrar
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="{% url 'tela_cadastrar_alunos' %}">Cadastrar Aluno</a></li>

@@ -255,3 +255,16 @@ def filtrar_prof_mat_sem_vinculo():
     materia_sem_vinculo = [mat for mat in materia if mat.id_materia not in materias_vinculadas_ids]
     # Retornar professores e matérias sem vínculos
     return professor_sem_vinculo, materia_sem_vinculo
+
+from .models import Materia_Professor
+from django.shortcuts import render
+
+def pesquisa(request):
+    # Verifica se o método da solicitação é GET
+    if request.method == 'GET':
+        # Obtenha os parâmetros de pesquisa da URL
+        pesquisa_query = request.GET.get('q', '')
+        # Realize a lógica de pesquisa com base na consulta de pesquisa
+        resultados_pesquisa = Materia_Professor.objects.filter(materia__nome__icontains=pesquisa_query)
+        # Renderize a página de resultados de pesquisa com os resultados encontrados
+        return render(request, 'qts/pesquisa.html', {'resultados_pesquisa': resultados_pesquisa})

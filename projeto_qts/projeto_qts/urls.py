@@ -42,4 +42,5 @@ urlpatterns = [
     path('cadastrar_materia_professor', views.cadastrar_materia_professor, name='cadastrar_materia_professor'),
     path('listar_materia_professor', views.listar_materia_professor, name='listar_materia_professor'),
     path('deletar_materia_professor/<int:id_materia>', views.deletar_materia_professor, name='deletar_materia_professor'),
+    path('pesquisa/', views.pesquisa, name='pesquisa'),
 ]
