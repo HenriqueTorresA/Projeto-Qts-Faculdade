@@ -321,6 +321,20 @@ def filtrar_prof_mat_sem_vinculo():
     # Retornar professores e matérias sem vínculos
     return professor_sem_vinculo, materia_sem_vinculo
 
+
+from .models import Materia_Professor
+from django.shortcuts import render
+
+def pesquisa(request):
+    # Verifica se o método da solicitação é GET
+    if request.method == 'GET':
+        # Obtenha os parâmetros de pesquisa da URL
+        pesquisa_query = request.GET.get('q', '')
+        # Realize a lógica de pesquisa com base na consulta de pesquisa
+        resultados_pesquisa = Materia_Professor.objects.filter(materia__nome__icontains=pesquisa_query)
+        # Renderize a página de resultados de pesquisa com os resultados encontrados
+        return render(request, 'qts/pesquisa.html', {'resultados_pesquisa': resultados_pesquisa})
+
 def ordena_nomes_quickSort(array_list):
     
     if len(array_list) <= 1:
@@ -332,3 +346,4 @@ def ordena_nomes_quickSort(array_list):
     maiores = [x for x in array_list[1:] if x > pivo]
     
     return ordena_nomes_quickSort(menores) + [pivo] + iguais + ordena_nomes_quickSort(maiores)
+
