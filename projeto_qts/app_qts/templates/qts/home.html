@@ -36,7 +36,23 @@
         </table>
     </div>
     <div class="col-1 cor-padrao-pagina"></div>
-</div><br><br>
+</div><br><br><hr>
+
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <form action="{% url 'botao_gerar_qts' %}" method="post">
+            {% csrf_token %}
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-success form-control-sm" type="submit" id="button-addon2">Gerar QTS</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-2"></div>
+</div>
+<hr>
+<br><br>
+
 <div class="row">
     <div class="col-1 cor-padrao-pagina"></div>
     <div class="col-10">

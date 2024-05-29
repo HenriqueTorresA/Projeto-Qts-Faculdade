@@ -1,29 +1,71 @@
 {% extends 'qts/base.html' %}
-<!-- qts/pesquisa.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados da Pesquisa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
+{% block conteudo %}
 <body>
-    <h1>Aooooooooooooooooo</h1>
-<!--    <div class="container mt-5">
-        <h1>Resultados da Pesquisa</h1>
-        <div class="list-group">
-            {% if id_materias %}
-                {% for resultado in id_materias %}
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <h5 class="mb-1">{{ resultado.id_materia.nome }} - {{ resultado.id_professor.nome }}</h5>
-                        <p class="mb-1">{{ resultado.disponibilidade_dia_materia }}</p>
-                    </a>
+    <h1 class="pt-5 ps-5">Resultados</h1>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8 justify-content-center">
+            <hr>
+            <div class="m-3 text-center"><h4>Busca por Matérias</h4></div>
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <th>Id da matéria</th>
+                    <th>Nome da matéria</th>
+                </thead>
+                {% for mat in tabela_materia %}
+                <tr>
+                    {% if mat.id != 'naoencontrado' %}
+                        <td> {{ mat.id }} </td>
+                        <td> {{ mat.nome }} </td>
+                    {% else %}
+                        <td class="fst-italic"><strong>Resultado não encontrado</strong></td>
+                        <td></td>
+                    {% endif %}
+                </tr>
                 {% endfor %}
-            {% else %}
-                <p class="text-muted">Nenhum resultado encontrado.</p>
-            {% endif %}
+            </table>
+            <br><br><hr>
+            <div class="m-3 text-center"><h4>Busca por Professores</h4></div>
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <th>Id do professor</th>
+                    <th>Nome do professor</th>
+                </thead>
+                {% for prof in tabela_professor %}
+                <tr>
+                    {% if prof.id != 'naoencontrado' %}
+                        <td> {{ prof.id }} </td>
+                        <td> {{ prof.nome }} </td>
+                    {% else %}
+                        <td class="fst-italic"><strong>Resultado não encontrado</strong></td>
+                        <td></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+            <br><br><hr>
+            <div class="m-3 text-center"><h4>Busca por Vínculos no Quadro Geral</h4></div>
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <th>Nome do professor vinculado</th>
+                    <th>Nome da matéria vinculada</th>
+                    <th>Dia da semana</th>
+                </thead>
+                {% for ddm in tabela_disp_dia_mat %}
+                <tr>
+                    {% if ddm.nome_materia != 'naoencontrado' %}
+                        <td> {{ ddm.nome_professor }} </td>
+                        <td> {{ ddm.nome_materia }} </td>
+                        <td> {{ ddm.nome_dia }} </td>
+                    {% else %}
+                        <td class="fst-italic"><strong>Resultado não encontrado</strong></td>
+                        <td></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
         </div>
-    </div> -->
+        <div class="col-2"></div>
+    </div>
 </body>
-</html>
+{% endblock %}

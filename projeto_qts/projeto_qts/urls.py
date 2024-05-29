@@ -43,4 +43,5 @@ urlpatterns = [
     path('listar_materia_professor', views.listar_materia_professor, name='listar_materia_professor'),
     path('deletar_materia_professor/<int:id_materia>', views.deletar_materia_professor, name='deletar_materia_professor'),
     path('pesquisa/', views.pesquisa, name='pesquisa'),
+    path('botao_gerar_qts/',views.botao_gerar_qts,name='botao_gerar_qts'),
 ]
