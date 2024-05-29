@@ -20,7 +20,7 @@
                 <th>Sexta</th>
                 <th>Sábado</th>
             </thead>
-            {% for linha in tabela_dados %}
+            {% for linha in tabela_dados_gerais %}
                 <tr>
                     <td>{{ linha.professor }}</td>
                     <td>{{ linha.domingo }}</td>
@@ -43,7 +43,7 @@
         <h3 class="text-center">Quadro de Trabalho Semanal Sugerido</h3>
         <table class="table table-bordered border border-dark">
             <thead class="cor-padrao-pagina">
-                <th>Professor</th>
+                <th>Horários</th>
                 <th>Domingo</th>
                 <th>Segunda</th>
                 <th>Terça</th>
@@ -52,16 +52,18 @@
                 <th>Sexta</th>
                 <th>Sábado</th>
             </thead>
-            <tr>
-                <td> linha.professor </td>
-                <td> linha.domingo </td>
-                <td> linha.segunda </td>
-                <td> linha.terca </td>
-                <td> linha.quarta </td>
-                <td> linha.quinta </td>
-                <td> linha.sexta </td>
-                <td> linha.sabado </td>
-            </tr>
+            {% for linha in tabela_dados_qts %}
+                <tr>
+                    <td> {{ linha.horario }} </td>
+                    <td> {{ linha.domingo }} </td>
+                    <td> {{ linha.segunda }} </td>
+                    <td> {{ linha.terca }} </td>
+                    <td> {{ linha.quarta }} </td>
+                    <td> {{ linha.quinta }} </td>
+                    <td> {{ linha.sexta }} </td>
+                    <td> {{ linha.sabado }} </td>
+                </tr>
+            {% endfor %}
         </table>
     </div>
     <div class="col-1 cor-padrao-pagina"></div>

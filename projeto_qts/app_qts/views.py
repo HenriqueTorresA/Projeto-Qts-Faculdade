@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Aluno, Professor, Materia, Dia, Materia_Professor, Disponibilidade_Dia, Disponibilidade_Dia_Materia
+import random
 # Create your views here.
 
 def home(request): #nome que foi especificado no arquivos urls.py
@@ -11,21 +12,29 @@ def home(request): #nome que foi especificado no arquivos urls.py
             dia = Dia(nome=nome_dia)
             dia.save()
 
-    ### =========================================================================================================
     # Obter todas as disponibilidades e professores
+    tabela_dados_gerais = gerar_quadro_geral()
+    tabela_dados_qts = gerar_qts()
+
+    contexto = {'tabela_dados_gerais': tabela_dados_gerais, 'tabela_dados_qts': tabela_dados_qts}
+
+    return render(request, 'qts/home.html', contexto)
+
+def gerar_quadro_geral():
     disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
     professores = Professor.objects.all()
-    tabela_dados = [] # Armazena as linhas das tabelas
+    tabela_dados_gerais = [] # Armazena as linhas da tabela de dados gerais
 
+    # GERAR A TABELA GERAL
     for prof in professores:
         # Inicializa um dicionário para armazenar as matérias de cada dia da semana para o professor atual
-        professor_atual = {dia: "-" for dia in range(1, 8)}  # Inicializa todos os dias com "-"
+        professor_atual = {dia: "-" for dia in range(1, 8)} # Inicializa todos os dias com "-"
         for disp in disp_dia_mat:
             if disp.id_professor.id_professor == prof.id_professor:
                 # Atualiza o dia específico com a matéria correta
                 professor_atual[disp.id_dia.id_dia] = disp.id_materia.nome
         # Adiciona os dados do professor atual à tabela
-        tabela_dados.append({
+        tabela_dados_gerais.append({
             'professor': prof.nome,
             'domingo': professor_atual[1],
             'segunda': professor_atual[2],
@@ -40,10 +49,60 @@ def home(request): #nome que foi especificado no arquivos urls.py
               f'Segunda: {professor_atual[2]}, Terça: {professor_atual[3]},' +
               f'Quarta: {professor_atual[4]}, Quinta: {professor_atual[5]},' +
               f'Sexta: {professor_atual[6]}, Sábado: {professor_atual[7]}')
-    contexto = {'tabela_dados': tabela_dados}
-    return render(request, 'qts/home.html', contexto)
 
+    return tabela_dados_gerais
+    
+def gerar_qts():
+    tabela_dados_qts = [] # Armazena as linhas da tabela de QTS
+    # GERAR A TABELA DE QTS
+      
+    horarios = ['1º', '2º', '3º', '4º']
 
+    for i in horarios:
+        horario_atual = {dia: "-" for dia in range(1, 8)}
+        for j in range(1, 8):
+            obj_dia = sortear_materia(j)
+            if obj_dia is not None:
+                horario_atual[j] = f'{obj_dia.id_materia.nome} - {obj_dia.id_professor.nome}'
+        tabela_dados_qts.append({
+            'horario': i,
+            'domingo': horario_atual[1],
+            'segunda': horario_atual[2],
+            'terca': horario_atual[3],
+            'quarta': horario_atual[4],
+            'quinta': horario_atual[5],
+            'sexta': horario_atual[6],
+            'sabado': horario_atual[7]
+        })
+
+    return tabela_dados_qts
+
+def sortear_materia(id_dia):
+    disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
+
+    materias_domingo = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 1]
+    materias_segunda = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 2]
+    materias_terca = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 3]
+    materias_quarta = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 4]
+    materias_quinta = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 5]
+    materias_sexta = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 6]
+    materias_sabado = [d for d in disp_dia_mat if (d.id_dia.id_dia) == 7]
+
+    if int(id_dia) == 1 and len(materias_domingo) > 0:
+        return random.choice(materias_domingo)
+    if int(id_dia) == 2 and len(materias_segunda) > 0:
+        return random.choice(materias_segunda)
+    if int(id_dia) == 3 and len(materias_terca) > 0:
+        return random.choice(materias_terca)
+    if int(id_dia) == 4 and len(materias_quarta) > 0:
+        return random.choice(materias_quarta)
+    if int(id_dia) == 5 and len(materias_quinta) > 0:
+        return random.choice(materias_quinta)
+    if int(id_dia) == 6 and len(materias_sexta) > 0:
+        return random.choice(materias_sexta)
+    if int(id_dia) == 7 and len(materias_sabado) > 0:
+        return random.choice(materias_sabado)
+    
 #abrir a tela de cadastro de alunos
 def tela_cadastrar_alunos(request):
     return render(request, 'qts/cadastro/alunos_cadastro.html')
