@@ -32,3 +32,7 @@ class Disponibilidade_Dia_Materia(models.Model):
     id_professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     id_materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
     id_dia = models.ForeignKey(Dia, on_delete=models.CASCADE)
+
+class Resultado(models.Model):
+    id_professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    id_materia = models.ForeignKey(Materia, on_delete=models.CASCADE)

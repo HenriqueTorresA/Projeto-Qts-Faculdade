@@ -381,18 +381,56 @@ def filtrar_prof_mat_sem_vinculo():
     return professor_sem_vinculo, materia_sem_vinculo
 
 
-from .models import Materia_Professor
-from django.shortcuts import render
-
+##Pesquisa Das Matérias
+  
 def pesquisa(request):
-    # Verifica se o método da solicitação é GET
-    if request.method == 'GET':
-        # Obtenha os parâmetros de pesquisa da URL
-        pesquisa_query = request.GET.get('q', '')
-        # Realize a lógica de pesquisa com base na consulta de pesquisa
-        resultados_pesquisa = Materia_Professor.objects.filter(materia__nome__icontains=pesquisa_query)
-        # Renderize a página de resultados de pesquisa com os resultados encontrados
-        return render(request, 'qts/pesquisa.html', {'resultados_pesquisa': resultados_pesquisa})
+    pesquisa = request.POST.get('pesquisa')
+    print(f"==============================================================\n{pesquisa}")
+
+    obj_materias = Materia.objects.all()
+    obj_professores = Professor.objects.all()
+    obj_disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
+
+    materias = []
+    for mat in obj_materias: 
+        materias.append(mat.nome)
+
+    professores = []
+    for prof in obj_professores: 
+        professores.append(prof.nome)
+
+    materias = ordena_nomes_quickSort(materias)
+    busca1 = buscaBinaria(materias, pesquisa, 0, len(materias))
+
+    professores = ordena_nomes_quickSort(professores)
+    busca2 = buscaBinaria(professores, pesquisa, 0, len(professores))
+
+    if busca1 >= 0:
+        print(materias[busca1])
+    else:
+        print("Resultado não encontrado")
+
+    if busca2 >= 0:
+        print(professores[busca2]) 
+    else:
+        print("Resultado não encontrado")
+
+    return render(request, 'qts/pesquisa.html')
+
+
+    
+def buscaBinaria(lista_palavras, palavra, primeiro, ultimo):
+    if primeiro <= ultimo:
+        meio = (primeiro + ultimo) // 2
+        if lista_palavras[meio] == palavra:
+            return meio
+        elif lista_palavras[meio] < palavra:
+            return buscaBinaria(lista_palavras, palavra, meio + 1, ultimo)
+        else:
+            return buscaBinaria(lista_palavras, palavra, primeiro, meio - 1)
+    else:
+        return -1
+
 
 def ordena_nomes_quickSort(array_list):
     
