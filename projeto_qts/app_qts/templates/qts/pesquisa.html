@@ -1,24 +1,29 @@
 {% extends 'qts/base.html' %}
+<!-- qts/pesquisa.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados da Pesquisa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Resultados da Pesquisa</h1>
-
-    <!-- Lista de resultados da pesquisa -->
-    <ul>
-        {% for resultado in resultados_pesquisa %}
-            <li>{{ resultado }}</li>
-        {% empty %}
-            <li>Nenhum resultado encontrado.</li>
-        {% endfor %}
-    </ul>
-
-    <!-- Link de volta à página inicial -->
-    <a href="{% url 'home' %}">Voltar para a página inicial</a>
+    <h1>Aooooooooooooooooo</h1>
+<!--    <div class="container mt-5">
+        <h1>Resultados da Pesquisa</h1>
+        <div class="list-group">
+            {% if id_materias %}
+                {% for resultado in id_materias %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ resultado.id_materia.nome }} - {{ resultado.id_professor.nome }}</h5>
+                        <p class="mb-1">{{ resultado.disponibilidade_dia_materia }}</p>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Nenhum resultado encontrado.</p>
+            {% endif %}
+        </div>
+    </div> -->
 </body>
 </html>
