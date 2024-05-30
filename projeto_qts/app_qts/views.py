@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
 from .models import Aluno, Professor, Materia, Dia, Materia_Professor, Disponibilidade_Dia, Disponibilidade_Dia_Materia, Qts
 import random
 # Create your views here.
@@ -170,13 +169,13 @@ def deletar_materia(request, id_materia):
     return redirect(listar_materia)
 
 def tela_materia_professor(request):
-    professores = Professor.objects.all()
     professor_sem_vinculo, materia_sem_vinculo = filtrar_prof_mat_sem_vinculo()
+    professores_ordenados_obj = obter_professores_ordenados()
+    materias_ordenadas_obj = obter_materias_ordenadas()
+
     context = {
-        'professor': Professor.objects.all(),
-        'professores_ids':[str(professor.id_professor) for professor in professores],
-        'materia': Materia.objects.all(),
-        'materia_professor': Materia_Professor.objects.all(),
+        'professor': professores_ordenados_obj,
+        'materia': materias_ordenadas_obj,
         'materia_sem_vinculo': materia_sem_vinculo,
         'dia_professor': Disponibilidade_Dia.objects.all()
 
@@ -258,11 +257,15 @@ def cadastrar_materia_professor(request):
 # View responsável por mostrar os vínculos de matéria com professor
 def listar_materia_professor(request):
     professor_sem_vinculo, materia_sem_vinculo = filtrar_prof_mat_sem_vinculo()
-
+    professores_ordenados_obj = obter_professores_ordenados()
+    disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
+    disp_dia_mat_ord = []
+    for prof_ord in professores_ordenados_obj:
+        for d in disp_dia_mat:
+            if str(d.id_professor.nome) == str(prof_ord.nome):
+                disp_dia_mat_ord.append(d)
     context = {
-        'professor': Professor.objects.all(),
-        'materia': Materia.objects.all(),
-        'materia_professor_dia': Disponibilidade_Dia_Materia.objects.all(),
+        'materia_professor_dia': disp_dia_mat_ord,
         'professor_sem_vinculo': professor_sem_vinculo,
         'materia_sem_vinculo': materia_sem_vinculo
     }
@@ -290,7 +293,10 @@ def pesquisa(request):
     # Criar listas vazias para receber os valores
     materias = [] # Lista de todas as matérias
     professores = [] # Lista de todos os professores
+    tabela_disp_dia_mat = []
     disponibilidade_dia_materia_mat = []
+    materias_encontradas = []
+    professores_encontrados = []
     disponibilidade_dia_materia_prof = []
     pesquisa = request.POST.get('pesquisa') # Valor digitado pelo usuário
     print(f"Pesquisa: \n{pesquisa}") # Debug do valor
@@ -304,7 +310,6 @@ def pesquisa(request):
         disponibilidade_dia_materia_mat.append(disp.id_materia.nome)
         disponibilidade_dia_materia_prof.append(disp.id_professor.nome)
         
-
     # Ordenar em ordem alfabética a lista de matérias e professores
     materias = ordena_nomes_quickSort(materias)
     professores = ordena_nomes_quickSort(professores)
@@ -314,12 +319,14 @@ def pesquisa(request):
     # Executar o algoritmo de busca binária usando as listas ordenadas
     busca_materias = buscaBinaria(materias, pesquisa, 0, len(materias)-1)
     busca_professores = buscaBinaria(professores, pesquisa, 0, len(professores)-1)
-    busca_disponibilidade_dia_materia_mat = buscaBinaria(disponibilidade_dia_materia_mat,
-                                                     pesquisa, 0, 
-                                                     len(disponibilidade_dia_materia_mat)-1)
-    busca_disponibilidade_dia_materia_prof = buscaBinaria(disponibilidade_dia_materia_prof,
-                                                          pesquisa, 0,
-                                                          len(disponibilidade_dia_materia_prof)-1)
+    #Procurar matérias dentro da disponibilidade_dia_materia
+    for d in obj_disp_dia_mat:
+        if str(d.id_materia.nome) == str(pesquisa):
+            materias_encontradas.append(d)
+    #Procurar professores dentro da disponibilidade_dia_materia
+    for d in obj_disp_dia_mat:
+        if str(d.id_professor.nome) == str(pesquisa):
+            professores_encontrados.append(d)
 
     # procurar o resultado da busca na lista de objetos do banco da tabela de matérias
     if busca_materias >= 0: # Garantir que o valor do retorno da função não seja -1
@@ -349,30 +356,21 @@ def pesquisa(request):
         obj_professor_encontrado_nome = 'naoencontrado'
         obj_professor_encontrado_id = 'naoencontrado'
 
-    # procurar o resultado da busca na lista de objetos do banco da tabela de disponibilidade_dia_materia
-    if busca_disponibilidade_dia_materia_mat >= 0: # busca o valor na lista de matérias dessa tabela
-        for disp in obj_disp_dia_mat:
-            if str(disp.id_materia.nome) == str(disponibilidade_dia_materia_mat[busca_disponibilidade_dia_materia_mat]):
-                obj_disp_encontrado_mat_nome = disp.id_materia.nome
-                obj_disp_encontrado_prof_nome = disp.id_professor.nome
-                obj_disp_encontrado_dia_nome = disp.id_dia.nome
-    elif busca_disponibilidade_dia_materia_prof >= 0: # busca o valor na lista de professores dessa tabela
-        for disp in obj_disp_dia_mat:
-            if str(disp.id_professor.nome) == str(disponibilidade_dia_materia_prof[busca_disponibilidade_dia_materia_prof]):
-                obj_disp_encontrado_mat_nome = disp.id_materia.nome
-                obj_disp_encontrado_prof_nome = disp.id_professor.nome
-                obj_disp_encontrado_dia_nome = disp.id_dia.nome
-    else: # caso não seja encontrado nada, tratar isso no HTML do Django
-        obj_disp_encontrado_mat_nome = 'naoencontrado'
-        obj_disp_encontrado_prof_nome = 'naoencontrado'
-        obj_disp_encontrado_dia_nome = 'naoencontrado'
-
     # Montar as listas de dicionários e montar as tabelas que vão ser apresentadas no HTML
     tabela_materia = [{'id': obj_materia_encontrada_id, 'nome': obj_materia_encontrada_nome}]
     tabela_professor = [{'id': obj_professor_encontrado_id, 'nome': obj_professor_encontrado_nome}]
-    tabela_disp_dia_mat = [{'nome_materia': obj_disp_encontrado_mat_nome,
-                            'nome_professor': obj_disp_encontrado_prof_nome,
-                            'nome_dia': obj_disp_encontrado_dia_nome}]
+    for mat in materias_encontradas: # Matérias encontradas na disponibilidade_dia_materia
+        tabela_disp_dia_mat.append({
+            'nome_materia': mat.id_materia.nome,
+            'nome_professor': mat.id_professor.nome,
+            'nome_dia': mat.id_dia.nome
+        })
+    for prof in professores_encontrados: # Professores encontrados na disponibilidade_dia_materia
+        tabela_disp_dia_mat.append({
+            'nome_materia': prof.id_materia.nome,
+            'nome_professor': prof.id_professor.nome,
+            'nome_dia': prof.id_dia.nome
+        })
 
     # Montar o dicionário principal do contexto para enviar as informações ao HTML
     contexto = {'tabela_professor': tabela_professor, 
@@ -393,10 +391,20 @@ def botao_gerar_qts(request):
 def gerar_quadro_geral():
     disp_dia_mat = Disponibilidade_Dia_Materia.objects.all()
     professores = Professor.objects.all()
+    professores_ordenados = [] # Armazena a lista de nome dos professores, porém de forma ordenada
+    professores_ordenados_obj = [] # Armazena os objetos do tipo Professor, de forma ordenada por nome
     tabela_dados_gerais = [] # Armazena as linhas da tabela de dados gerais
 
+    for prof in professores: # Colocar o nome de todos os professores na lista que vamos ordenar
+        professores_ordenados.append(str(prof.nome))
+    professores_ordenados = ordena_nomes_quickSort(professores_ordenados) #Ordenar a lista de nomes
+    for p in professores_ordenados: # Percorrer a lista de nome dos professores ordenados
+        for prof in professores: # Percorrer a lista de objetos para ordenar essa lista
+            if str(prof.nome) == p: # Adicionar o objeto se o nome for igual ao nome atual da lista ordenada
+                professores_ordenados_obj.append(prof) # Montar a lista ordenada por nome dos objetos
+    
     # GERAR A TABELA GERAL
-    for prof in professores:
+    for prof in professores_ordenados_obj:
         # Inicializa um dicionário para armazenar as matérias de cada dia da semana para o professor atual
         professor_atual = {dia: "-" for dia in range(1, 8)} # Inicializa todos os dias com "-"
         for disp in disp_dia_mat:
@@ -483,6 +491,8 @@ def sortear_materia(id_dia):
 # não possuem vínculo com nenhum professor
 def filtrar_prof_mat_sem_vinculo():
     professor = Professor.objects.all()
+    professor_ordenado = obter_professores_ordenados()
+    materia_ordenada = obter_materias_ordenadas()
     materia = Materia.objects.all()
     materia_professor = Materia_Professor.objects.all()
 
@@ -492,8 +502,21 @@ def filtrar_prof_mat_sem_vinculo():
     # Filtra os professores e materias que não estão vinculados
     professor_sem_vinculo = [prof for prof in professor if prof.id_professor not in professores_vinculados_ids]
     materia_sem_vinculo = [mat for mat in materia if mat.id_materia not in materias_vinculadas_ids]
+    professor_sem_vinculo_ord = []
+    materia_sem_vinculo_ord = []
+    # Ordenar a lista de professores sem vínculo
+    for po in professor_ordenado:
+        for p in professor_sem_vinculo:
+            if str(po.nome) == str(p.nome):
+                professor_sem_vinculo_ord.append(p)
+    # Ordenar a lista de matérias sem vínculo
+    for mo in materia_ordenada:
+        for m in materia_sem_vinculo:
+            if str(mo.nome) == str(m.nome):
+                materia_sem_vinculo_ord.append(m)
+
     # Retornar professores e matérias sem vínculos
-    return professor_sem_vinculo, materia_sem_vinculo
+    return professor_sem_vinculo_ord, materia_sem_vinculo_ord
     
 # Algoritmo de busca binária
 # Retorna o índice do valor procurado dentro da lista passada
@@ -523,3 +546,35 @@ def ordena_nomes_quickSort(array_list):
     
     return ordena_nomes_quickSort(menores) + [pivo] + iguais + ordena_nomes_quickSort(maiores)
 
+# Busca os objetos de professores ordenados por nome
+# Retorna os objetos de professores ordenados por nome
+def obter_professores_ordenados():
+    professores = Professor.objects.all()
+    professores_ordenados = [] # Armazena a lista de nome dos professores, porém de forma ordenada
+    professores_ordenados_obj = [] # Armazena os objetos do tipo Professor, de forma ordenada por nome
+
+    for prof in professores: # Colocar o nome de todos os professores na lista que vamos ordenar
+        professores_ordenados.append(str(prof.nome))
+    professores_ordenados = ordena_nomes_quickSort(professores_ordenados) #Ordenar a lista de nomes
+    for p in professores_ordenados: # Percorrer a lista de nome dos professores ordenados
+        for prof in professores: # Percorrer a lista de objetos para ordenar essa lista
+            if str(prof.nome) == p: # Adicionar o objeto se o nome for igual ao nome atual da lista ordenada
+                professores_ordenados_obj.append(prof) # Montar a lista ordenada por nome dos objetos
+    
+    return professores_ordenados_obj
+
+# Busca os objetos de materias ordenados por nome
+# Retorna os objetos de materias ordenados por nome
+def obter_materias_ordenadas():
+    materias = Materia.objects.all()
+    materias_ordenadas = [] # Armazena a lista de nome das materias, porém de forma ordenada
+    materias_ordenadas_obj = [] # Armazena os objetos do tipo Professor, de forma ordenada por nome
+
+    for mat in materias: # Colocar o nome de todas os materias na lista que vamos ordenar
+        materias_ordenadas.append(str(mat.nome))
+    materias_ordenadas = ordena_nomes_quickSort(materias_ordenadas) #Ordenar a lista de nomes
+    for m in materias_ordenadas: # Percorrer a lista de nome das materias ordenadas
+        for mat in materias: # Percorrer a lista de objetos para ordenar essa lista
+            if str(mat.nome) == str(m): # Adicionar o objeto se o nome for igual ao nome atual da lista ordenada
+                materias_ordenadas_obj.append(mat) # Montar a lista ordenada por nome das objetos
+    return materias_ordenadas_obj
