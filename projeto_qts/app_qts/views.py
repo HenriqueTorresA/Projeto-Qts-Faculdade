@@ -199,14 +199,6 @@ def cadastrar_materia_professor(request):
             dias_professor.append(int(d.id_dia.id_dia))
     if int(diaId) not in dias_professor:
         return render(request, 'qts/erros/erro_semProf_semId.html')
-            
-
-    # Não permitir que seja cadastrado um novo relacionamento de uma matéria que já tenha professor
-    id_materia_lista = []
-    for matprof in materiaProfessor: #Objeto que lista os vínculos existentes
-        id_materia_lista.append(matprof.id_materia.id_materia) #Adiciona o id_materia na lista
-    if int(materiaId) in id_materia_lista: #Se a matéria já existir nessa lista das matérias que já temos
-        return render(request, 'qts/erros/erro_ja_tem_MateriaProfessor.html') #Então voltar à tela de cadastro sem salvar nada
 
     # Lidar com o caso em que a matéria ou o professor não existe
     try:
@@ -217,6 +209,19 @@ def cadastrar_materia_professor(request):
     #Capturar a exceção que acusa que não existe valores em materia ou professor
     except (Materia.DoesNotExist, Professor.DoesNotExist):
         return render(request, 'qts/erros/erro_semProf_semId.html') # Retornar tela de erro
+
+    # Não permitir que seja cadastrado um novo relacionamento de uma matéria que já tenha professor
+    # Desde que o vínculo que existe seja do mesmo professor que foi selecionado, em outro dia da semana
+    teste = False # Teste que verifica se o professor selecionado é o mesmo do que já está vinculado com 
+                  # esta matéria. Se for, então pode inserir a matéria, agora se não for, retornar o erro
+                  # informando que a matéria já está vinculada a outro professor
+    id_materia_lista = []
+    for matprof in materiaProfessor: #Objeto que lista os vínculos existentes
+        id_materia_lista.append(matprof.id_materia.id_materia) #Adiciona o id_materia na lista
+        if matprof.id_materia == materiaSelecionada and matprof.id_professor == professorSelecionado:
+            teste = True # Se o professor selecionado for o mesmo que já tem a matéria vinculada, permitir vínculo
+    if int(materiaId) in id_materia_lista and not teste: #Se a matéria já existir nessa lista das matérias que já temos
+        return render(request, 'qts/erros/erro_ja_tem_MateriaProfessor.html') #Então voltar à tela de cadastro sem salvar nada
     
     #pegar o id do dia selecionado em inteiro e gravar em uma variável do tipo objeto de dia
     for d in disp_dia:

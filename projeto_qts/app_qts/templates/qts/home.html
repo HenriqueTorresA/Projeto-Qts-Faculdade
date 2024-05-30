@@ -10,7 +10,7 @@
     <div class="col-10">
         <h3 class="text-center">Quadro de Matérias Disponível Por dias</h3>
         <table class="table table-bordered border border-dark">
-            <thead class="cor-padrao-pagina">
+            <thead style="background-color: rgb(60, 14, 14); color: white">
                 <th>Professor</th>
                 <th>Domingo</th>
                 <th>Segunda</th>
@@ -36,21 +36,24 @@
         </table>
     </div>
     <div class="col-1 cor-padrao-pagina"></div>
-</div><br><br><hr>
+</div><br><br>
 
-<div class="row">
-    <div class="col-2"></div>
-    <div class="col-8">
-        <form action="{% url 'botao_gerar_qts' %}" method="post">
-            {% csrf_token %}
-            <div class="d-grid gap-2">
-                <button class="btn btn-outline-success form-control-sm" type="submit" id="button-addon2">Gerar QTS</button>
-            </div>
-        </form>
+<div style="background-color: rgb(60, 14, 14); color: white">
+    <hr><br>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <form action="{% url 'botao_gerar_qts' %}" method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary form-control-sm" type="submit" id="button-addon2">Gerar QTS</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-2"></div>
     </div>
-    <div class="col-2"></div>
+    <br><hr>
 </div>
-<hr>
 <br><br>
 
 <div class="row">
@@ -58,7 +61,7 @@
     <div class="col-10">
         <h3 class="text-center">Quadro de Trabalho Semanal Sugerido</h3>
         <table class="table table-bordered border border-dark">
-            <thead class="cor-padrao-pagina">
+            <thead style="background-color: rgb(60, 14, 14); color: white">
                 <th>Horários</th>
                 <th>Domingo</th>
                 <th>Segunda</th>
