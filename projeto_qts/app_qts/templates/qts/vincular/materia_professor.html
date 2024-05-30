@@ -71,16 +71,33 @@
                     <th class="text-center">Matérias</th>
                 </tr>
             </thead>
-            <!-- Sintaxe específica do Django para laço de repetição:-->
+            <!-- Pegar as matérias que estão sem vínculo:-->
             {% for materia in materia %}
-            <tr>
-                <td>
-                    <div class="form-check ps-5">
-                        <input class="form-check-input" type="radio" name="check-materia" value="{{ materia.id_materia }}" id="check-materia-{{ materia.id_materia }}">
-                        <label class="form-check-label" for="check-materia-{{ materia.id_materia }}"><strong>{{ materia.nome }}</strong></label>
-                    </div>
-                </td>
-            </tr>
+                {% for materiasv in materia_sem_vinculo %}
+                    {% if materia == materiasv %}
+                        <tr>
+                            <td style="background-color: rgb(232, 252, 233);">
+                                <div class="form-check ps-5">
+                                    <input class="form-check-input" type="radio" name="check-materia" value="{{ materia.id_materia }}" id="check-materia-{{ materia.id_materia }}">
+                                    <label class="form-check-label" for="check-materia-{{ materia.id_materia }}"><strong>{{ materia.nome }}</strong></label>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            <!-- Pegar as matérias que já possuem vínculo:-->
+            {% for materia in materia %}
+                {% if materia not in materia_sem_vinculo %}
+                    <tr>
+                        <td style="background-color: rgb(252, 234, 233);">
+                            <div class="form-check ps-5">
+                                <input class="form-check-input" type="radio" name="check-materia" value="{{ materia.id_materia }}" id="check-materia-{{ materia.id_materia }}">
+                                <label class="form-check-label" for="check-materia-{{ materia.id_materia }}"><strong>{{ materia.nome }}</strong></label>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
             {% endfor %}
             
         </table>
